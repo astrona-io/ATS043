@@ -1,9 +1,9 @@
-# Preparation scaffold. Technical pages stay draft until authoring and review.
+# Reading-only course. YAML assessments are registered separately in assessments/index.yaml.
 training:
   id: ATS043
   title: 'KCSA: Kubernetes Security Fundamentals'
-  description: Preparation scaffold for Kubernetes Security Fundamentals. Lessons and environments are
-    planned.
+  description: Concept lessons, diagrams and original scenario assessments covering every published objective
+    in this KCSA domain. No labs or playgrounds.
   certification:
     name: Kubernetes and Cloud Native Security Associate
     code: KCSA
@@ -22,7 +22,7 @@ training:
 modules:
 - id: module-intro
   title: Introduction
-  description: Planned introduction and authoring status.
+  description: Audience, learning approach, reading requirements and contribution process.
   content:
   - type: reading
     title: Introduction
@@ -38,81 +38,137 @@ modules:
     path: sections/intro/course-03-how-this-course-is-made.md
 - id: module-010
   title: Pod Security Standards
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Pod Security Standards.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Pod Security Standards: Introduction'
     path: sections/section-010/README.md
   - type: reading
-    title: Pod Security Standards
+    title: Pod Security Profiles
     path: sections/section-010/module-01/course.md
+  - type: reading
+    title: Security Contexts And Profile Requirements
+    path: sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-01/course-02-summary.md
 - id: module-020
   title: Pod Security Admissions
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Pod Security Admissions.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Pod Security Admissions: Introduction'
     path: sections/section-020/README.md
   - type: reading
-    title: Pod Security Admissions
+    title: Pod Security Admission Decisions
     path: sections/section-020/module-01/course.md
+  - type: reading
+    title: Applying Pod Security Requirements At Admission
+    path: sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-01/course-02-summary.md
 - id: module-030
   title: Authentication
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Authentication.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Authentication: Introduction'
     path: sections/section-030/README.md
   - type: reading
-    title: Authentication
+    title: Authentication And Workload Credentials
     path: sections/section-030/module-01/course.md
+  - type: reading
+    title: API Identity And ServiceAccounts
+    path: sections/section-030/module-01/course-01-api-identity-and-serviceaccounts.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-01/course-02-summary.md
 - id: module-040
   title: Authorization
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Authorization.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Authorization: Introduction'
     path: sections/section-040/README.md
   - type: reading
-    title: Authorization
+    title: Authorization And Effective Permissions
     path: sections/section-040/module-01/course.md
+  - type: reading
+    title: RBAC Grants And Their Consequences
+    path: sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-01/course-02-summary.md
 - id: module-050
   title: Secrets
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Secrets.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Secrets: Introduction'
     path: sections/section-050/README.md
   - type: reading
-    title: Secrets
+    title: Secret Delivery And Credential Lifecycle
     path: sections/section-050/module-01/course.md
+  - type: reading
+    title: Secret Storage, Delivery And Rotation
+    path: sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+  - type: reading
+    title: Summary
+    path: sections/section-050/module-01/course-02-summary.md
 - id: module-060
   title: Isolation and Segmentation
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Isolation and Segmentation.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Isolation and Segmentation: Introduction'
     path: sections/section-060/README.md
   - type: reading
-    title: Isolation and Segmentation
+    title: Isolation And Namespace Segmentation
     path: sections/section-060/module-01/course.md
+  - type: reading
+    title: Segmentation Across Trust Boundaries
+    path: sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+  - type: reading
+    title: Summary
+    path: sections/section-060/module-01/course-02-summary.md
 - id: module-070
   title: Audit Logging
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Audit Logging.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Audit Logging: Introduction'
     path: sections/section-070/README.md
   - type: reading
-    title: Audit Logging
+    title: Audit Policy And Security Evidence
     path: sections/section-070/module-01/course.md
+  - type: reading
+    title: Designing Useful And Protected Audit Records
+    path: sections/section-070/module-01/course-01-designing-useful-and-protected-audit-records.md
+  - type: reading
+    title: Summary
+    path: sections/section-070/module-01/course-02-summary.md
 - id: module-080
   title: Network Policy
-  description: Planned coverage of this curriculum objective.
+  description: Concept lessons and scenario reasoning for Network Policy.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: 'Network Policy: Introduction'
     path: sections/section-080/README.md
   - type: reading
-    title: Network Policy
+    title: NetworkPolicy Semantics And Verification
     path: sections/section-080/module-01/course.md
+  - type: reading
+    title: Traffic Isolation And Allowed Peers
+    path: sections/section-080/module-01/course-01-traffic-isolation-and-allowed-peers.md
+  - type: reading
+    title: Summary
+    path: sections/section-080/module-01/course-02-summary.md
