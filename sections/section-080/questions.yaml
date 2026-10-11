@@ -1,0 +1,113 @@
+schema_version: 1
+kind: question_bank
+id: ats043-section-080
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: section
+  id: section-080
+  title: 'Checkpoint: Network Policy'
+placement:
+  position: after
+  reading: sections/section-080/module-01/course-02-summary.md
+questions:
+- id: ats043-section-080-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain what Kubernetes audit events record.
+  source_readings:
+  - sections/section-070/module-01/course-01-designing-useful-and-protected-audit-records.md
+  prompt: An API audit event records successful resource creation. What further evidence is needed for
+    runtime impact?
+  options:
+  - id: a
+    text: No evidence because accepted intent proves all behavior.
+    explanation: Later stages remain separate.
+  - id: b
+    text: Relevant workload, runtime and application observations.
+    explanation: API acceptance does not record every later execution effect.
+  - id: c
+    text: Only changing the audit filename.
+    explanation: Naming does not extend observation coverage.
+  correct_option: b
+  explanation: API acceptance does not record every later execution effect.
+- id: ats043-section-080-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Compare Metadata, Request and RequestResponse audit detail.
+  source_readings:
+  - sections/section-070/module-01/course-01-designing-useful-and-protected-audit-records.md
+  prompt: An audit policy records full bodies for sensitive Secret requests. What risk arises?
+  options:
+  - id: a
+    text: Credentials can be copied into the audit store.
+    explanation: Additional detail can create a disclosure path.
+  - id: b
+    text: Audit records automatically encrypt every value for every reader.
+    explanation: Access and encryption depend on the actual design.
+  - id: c
+    text: All API authorization is disabled by the detail level.
+    explanation: Recording detail does not itself replace permission checks.
+  correct_option: a
+  explanation: Additional detail can create a disclosure path.
+- id: ats043-section-080-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Relate audit retention and protection to investigation.
+  source_readings:
+  - sections/section-070/module-01/course-01-designing-useful-and-protected-audit-records.md
+  prompt: No record remains for an old action after retention expired. What conclusion is supported?
+  options:
+  - id: a
+    text: The caller definitely performed no action.
+    explanation: Expired data cannot support that certainty.
+  - id: b
+    text: Restarting a collector recreates every past event.
+    explanation: A collector cannot reconstruct unretained historical observations.
+  - id: c
+    text: The evidence is unavailable; absence does not prove the action never happened.
+    explanation: Retention bounds later investigation.
+  correct_option: c
+  explanation: Retention bounds later investigation.
+- id: ats043-section-080-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Evaluate additive allowed rules and selector structure.
+  source_readings:
+  - sections/section-080/module-01/course-01-traffic-isolation-and-allowed-peers.md
+  prompt: Two policies select the same destination and permit different callers. How do their ordinary
+    allowances combine?
+  options:
+  - id: a
+    text: The more restrictive name overrides every rule.
+    explanation: Object names do not establish precedence.
+  - id: b
+    text: As a union of allowed traffic for the isolated direction.
+    explanation: Policies provide additive allowances.
+  - id: c
+    text: The later filename automatically replaces the earlier one.
+    explanation: File ordering does not define that policy union.
+  correct_option: b
+  explanation: Policies provide additive allowances.
+- id: ats043-section-080-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Relate DNS and dependencies to egress requirements.
+  source_readings:
+  - sections/section-080/module-01/course-01-traffic-isolation-and-allowed-peers.md
+  prompt: A source is egress-isolated and cannot resolve Service names. Which required dependency may
+    need an allowance?
+  options:
+  - id: a
+    text: DNS through the intended resolver path.
+    explanation: Discovery can fail before a permitted backend connection is attempted.
+  - id: b
+    text: Only the image's writable layer.
+    explanation: That does not permit DNS network requests.
+  - id: c
+    text: A wildcard administrative role by default.
+    explanation: API administration is not the specific connection requirement.
+  correct_option: a
+  explanation: Discovery can fail before a permitted backend connection is attempted.

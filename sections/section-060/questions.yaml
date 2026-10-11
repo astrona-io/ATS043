@@ -1,0 +1,114 @@
+schema_version: 1
+kind: question_bank
+id: ats043-section-060
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: section
+  id: section-060
+  title: 'Checkpoint: Isolation and Segmentation'
+placement:
+  position: after
+  reading: sections/section-060/module-01/course-02-summary.md
+questions:
+- id: ats043-section-060-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Compare Role, ClusterRole, RoleBinding and ClusterRoleBinding.
+  source_readings:
+  - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+  prompt: A RoleBinding references a ClusterRole in one namespace. Which scope applies to the namespaced
+    grant?
+  options:
+  - id: a
+    text: Only nodes carrying a matching label.
+    explanation: RBAC grant scope is not node placement selection.
+  - id: b
+    text: The RoleBinding's namespace.
+    explanation: Reusing a cluster-scoped definition does not make this binding cluster-wide.
+  - id: c
+    text: Every namespace automatically.
+    explanation: A ClusterRoleBinding is the distinct cluster-wide arrangement.
+  correct_option: b
+  explanation: Reusing a cluster-scoped definition does not make this binding cluster-wide.
+- id: ats043-section-060-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain additive grants and indirect privilege.
+  source_readings:
+  - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+  prompt: A broad grant is removed from one role, but another binding still grants it. What is the effective
+    result?
+  options:
+  - id: a
+    text: The permission can remain because applicable grants combine.
+    explanation: RBAC is additive across applicable grants.
+  - id: b
+    text: The omitted rule explicitly denies every other grant.
+    explanation: Omission is not a general deny rule.
+  - id: c
+    text: The identity cannot authenticate anymore.
+    explanation: Permission changes do not necessarily revoke the credential's identity.
+  correct_option: a
+  explanation: RBAC is additive across applicable grants.
+- id: ats043-section-060-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain why Secret encoding is not encryption.
+  source_readings:
+  - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+  prompt: A Secret value is base64-encoded. What confidentiality guarantee follows from encoding alone?
+  options:
+  - id: a
+    text: It is encrypted against every API reader.
+    explanation: Authorized readers can decode the representation.
+  - id: b
+    text: It cannot be printed by application logs.
+    explanation: Process behavior can still disclose received plaintext.
+  - id: c
+    text: None; encoding is reversible and distinct from encryption.
+    explanation: Access and storage protections remain necessary.
+  correct_option: c
+  explanation: Access and storage protections remain necessary.
+- id: ats043-section-060-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Describe rotation that updates consumers and revokes old authority.
+  source_readings:
+  - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+  prompt: A Secret source is updated, but consumers use startup environment values. What must rotation
+    account for?
+  options:
+  - id: a
+    text: A new label that automatically edits process memory.
+    explanation: Labels do not rewrite running environment variables.
+  - id: b
+    text: Consumer replacement or reconfiguration and revocation at the issuer.
+    explanation: Source delivery and old-authority removal are distinct stages.
+  - id: c
+    text: Only the source object's new value.
+    explanation: That does not prove consumers adopt it or old access is invalid.
+  correct_option: b
+  explanation: Source delivery and old-authority removal are distinct stages.
+- id: ats043-section-060-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Distinguish namespace scope from physical or kernel isolation.
+  source_readings:
+  - sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+  prompt: Two namespaces share workers and no explicit connection isolation is applied. What should not
+    be assumed?
+  options:
+  - id: a
+    text: Separate kernels or automatic network denial.
+    explanation: Namespacing scopes selected API behavior rather than all boundaries.
+  - id: b
+    text: Separate names for namespaced objects.
+    explanation: That is a valid namespace property.
+  - id: c
+    text: A need to inspect permissions.
+    explanation: The design still requires that inspection.
+  correct_option: a
+  explanation: Namespacing scopes selected API behavior rather than all boundaries.

@@ -1,0 +1,113 @@
+schema_version: 1
+kind: question_bank
+id: ats043-domain-review
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: domain
+  id: domain-review
+  title: Kubernetes Security Fundamentals
+placement:
+  position: after
+  reading: sections/section-080/module-01/course-02-summary.md
+questions:
+- id: ats043-domain-review-q01
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish compliant configuration from complete application security.
+  source_readings:
+  - sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+  prompt: A Restricted-compliant Pod returns another customer's records. Which protection still needs
+    investigation?
+  options:
+  - id: a
+    text: More permissive runtime settings as the first remedy.
+    explanation: Broad privileges do not correct unauthorized data access.
+  - id: b
+    text: Application data authorization.
+    explanation: Profile compliance does not prove business permission logic.
+  - id: c
+    text: Only the Pod's security profile spelling.
+    explanation: The failure concerns data permission, not title formatting.
+  correct_option: b
+  explanation: Profile compliance does not prove business permission logic.
+- id: ats043-domain-review-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain namespace policy labels and version selection.
+  source_readings:
+  - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+  prompt: An untrusted identity can weaken namespace policy labels. What is the security issue?
+  options:
+  - id: a
+    text: It can influence the control that is supposed to constrain workloads.
+    explanation: Policy configuration ownership is part of enforcement trust.
+  - id: b
+    text: The labels are merely cosmetic in all cases.
+    explanation: These labels select admission behavior.
+  - id: c
+    text: Every label change creates another kernel.
+    explanation: Metadata does not provide that execution boundary.
+  correct_option: a
+  explanation: Policy configuration ownership is part of enforcement trust.
+- id: ats043-domain-review-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain additive grants and indirect privilege.
+  source_readings:
+  - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+  prompt: A workload cannot directly read Secrets but can create a Pod mounting sensitive data under permissive
+    policy. What does this illustrate?
+  options:
+  - id: a
+    text: A universal rule that every Pod creator is always cluster-admin.
+    explanation: The route depends on actual grants and surrounding policy.
+  - id: b
+    text: That namespace scope removes every data path.
+    explanation: A namespaced operation can still have sensitive consequences.
+  - id: c
+    text: Indirect authority through permitted resource operations.
+    explanation: Effective access needs analysis beyond one direct verb.
+  correct_option: c
+  explanation: Effective access needs analysis beyond one direct verb.
+- id: ats043-domain-review-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Identify authorization and diagnostic exposure risks.
+  source_readings:
+  - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+  prompt: A debug bundle prints the application's password. Which boundary was missing?
+  options:
+  - id: a
+    text: A different Service port.
+    explanation: Port mapping does not sanitize diagnostic content.
+  - id: b
+    text: Safe diagnostic handling and access to the copied value.
+    explanation: Secret resource protection does not automatically sanitize logs or exports.
+  - id: c
+    text: Only a larger memory request.
+    explanation: Capacity does not prevent the disclosure.
+  correct_option: b
+  explanation: Secret resource protection does not automatically sanitize logs or exports.
+- id: ats043-domain-review-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish declared policy from actual implementation enforcement.
+  source_readings:
+  - sections/section-080/module-01/course-01-traffic-isolation-and-allowed-peers.md
+  prompt: A policy exists, traffic passes and enforcement support is unknown. What should be established
+    first?
+  options:
+  - id: a
+    text: Whether the installed network implementation realizes the intended rules.
+    explanation: Object presence is not enforcement evidence.
+  - id: b
+    text: That every caller is automatically authorized by policy name.
+    explanation: Names are not a permission decision.
+  - id: c
+    text: That TLS alone blocks every unwanted connection.
+    explanation: Encryption and connection isolation are separate.
+  correct_option: a
+  explanation: Object presence is not enforcement evidence.

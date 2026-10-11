@@ -1,0 +1,111 @@
+schema_version: 1
+kind: question_bank
+id: ats043-section-030
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: section
+  id: section-030
+  title: 'Checkpoint: Authentication'
+placement:
+  position: after
+  reading: sections/section-030/module-01/course-02-summary.md
+questions:
+- id: ats043-section-030-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Compare Privileged, Baseline and Restricted profiles.
+  source_readings:
+  - sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+  prompt: Which Pod Security profile applies stronger hardening requirements than Baseline?
+  options:
+  - id: a
+    text: A profile name alone that automatically proves business authorization.
+    explanation: These profiles check configuration rather than every business rule.
+  - id: b
+    text: Restricted.
+    explanation: The profiles represent distinct levels of permitted configuration.
+  - id: c
+    text: Privileged.
+    explanation: It permits broad behavior rather than the stronger restriction described.
+  correct_option: b
+  explanation: The profiles represent distinct levels of permitted configuration.
+- id: ats043-section-030-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Relate image users and writable paths to profile compatibility.
+  source_readings:
+  - sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+  prompt: A non-root application cannot write a required temporary directory. What is a suitable response?
+  options:
+  - id: a
+    text: Provide a compatible identity and narrowly appropriate writable mount.
+    explanation: The application can operate within protection rather than discarding it.
+  - id: b
+    text: Always grant full privilege to every container.
+    explanation: That broadens authority beyond the specific file requirement.
+  - id: c
+    text: Assume read-only roots mean no filesystem design is needed.
+    explanation: Needed writes still require an appropriate path.
+  correct_option: a
+  explanation: The application can operate within protection rather than discarding it.
+- id: ats043-section-030-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Distinguish enforce, warn and audit policy modes.
+  source_readings:
+  - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+  prompt: A namespace uses audit mode for a profile but does not enforce it. What does this mean?
+  options:
+  - id: a
+    text: Every violating Pod is necessarily blocked by audit mode.
+    explanation: Recording is not equivalent to rejection.
+  - id: b
+    text: The profile's requirements cease to exist.
+    explanation: The requirements still define what is observed.
+  - id: c
+    text: Violations can be recorded without that mode rejecting them.
+    explanation: Audit and enforce have different effects.
+  correct_option: c
+  explanation: Audit and enforce have different effects.
+- id: ats043-section-030-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Predict the effect of policy changes on new workload Pods.
+  source_readings:
+  - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+  prompt: A policy change tightens Pod admission while an existing workload still runs. What should be
+    assessed?
+  options:
+  - id: a
+    text: Assume every future Pod is grandfathered forever.
+    explanation: New admission decisions use the effective policy and exceptions.
+  - id: b
+    text: Whether future replacement Pods and updates meet the new requirements.
+    explanation: Existing execution does not guarantee future admission.
+  - id: c
+    text: Only whether the application's name changed.
+    explanation: Naming does not establish configuration compliance.
+  correct_option: b
+  explanation: Existing execution does not guarantee future admission.
+- id: ats043-section-030-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain ServiceAccount token audience and lifetime.
+  source_readings:
+  - sections/section-030/module-01/course-01-api-identity-and-serviceaccounts.md
+  prompt: A projected token has a limited audience and lifetime. What do these controls bound?
+  options:
+  - id: a
+    text: The intended recipient and period in which the credential can be useful.
+    explanation: They narrow selected credential exposure properties.
+  - id: b
+    text: Every operation the authenticated identity may perform.
+    explanation: Authorization grants are a separate control.
+  - id: c
+    text: Whether the application contains vulnerable code.
+    explanation: Token properties do not verify application code.
+  correct_option: a
+  explanation: They narrow selected credential exposure properties.
