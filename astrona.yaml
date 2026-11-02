@@ -39,7 +39,7 @@ modules:
 - id: module-010
   title: Pod Security Standards
   description: Concept lessons and scenario reasoning for Pod Security Standards.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Pod Security Standards: Introduction'
@@ -56,7 +56,7 @@ modules:
 - id: module-020
   title: Pod Security Admissions
   description: Concept lessons and scenario reasoning for Pod Security Admissions.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Pod Security Admissions: Introduction'
@@ -73,7 +73,7 @@ modules:
 - id: module-030
   title: Authentication
   description: Concept lessons and scenario reasoning for Authentication.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Authentication: Introduction'
@@ -90,7 +90,7 @@ modules:
 - id: module-040
   title: Authorization
   description: Concept lessons and scenario reasoning for Authorization.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Authorization: Introduction'
@@ -107,7 +107,7 @@ modules:
 - id: module-050
   title: Secrets
   description: Concept lessons and scenario reasoning for Secrets.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Secrets: Introduction'
@@ -124,7 +124,7 @@ modules:
 - id: module-060
   title: Isolation and Segmentation
   description: Concept lessons and scenario reasoning for Isolation and Segmentation.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Isolation and Segmentation: Introduction'
@@ -141,7 +141,7 @@ modules:
 - id: module-070
   title: Audit Logging
   description: Concept lessons and scenario reasoning for Audit Logging.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Audit Logging: Introduction'
@@ -158,7 +158,7 @@ modules:
 - id: module-080
   title: Network Policy
   description: Concept lessons and scenario reasoning for Network Policy.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: 'Network Policy: Introduction'
