@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Isolation And Segmentation (LAB). Graded against the live cluster. Add a quota and default limits and remove host namespace sharing.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-lab-060-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: quota
+      description: ResourceQuota bay-quota limits pods, requests and memory limits in bay
+      type: file
+      source: validation/validate-quota.sh
+      hint: Create ResourceQuota bay-quota in bay with hard values pods 6, requests.cpu 1, requests.memory 1Gi and limits.memory 2Gi.
+    - name: limitrange
+      description: LimitRange bay-limits sets default requests and a default memory limit for containers
+      type: file
+      source: validation/validate-limitrange.sh
+      hint: "Create LimitRange bay-limits with a Container entry: defaultRequest cpu 50m and memory 32Mi, default memory 128Mi."
+    - name: defaults-and-quota-enforced
+      description: A Pod without resources gets the defaults and a Pod over the quota is refused
+      type: file
+      source: validation/validate-defaults-and-quota-enforced.sh
+      hint: Check the quota and LimitRange values. A server-side dry run shows what the API server would do.
+    - name: crane-isolated
+      description: crane in bay no longer shares the host PID namespace and is available
+      type: file
+      source: validation/validate-crane-isolated.sh
+      hint: Remove hostPID from the crane pod template and wait for the rollout.
+    - name: drifter-available
+      description: drifter in bay is still available
+      type: file
+      source: validation/validate-drifter-available.sh
+      hint: Do not delete or scale drifter.
+
+teardown:
+  keepCluster: false

@@ -1,0 +1,220 @@
+# Knowledge check for section 060. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats043-060
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-060
+  title: "Isolation"
+questions:
+  - id: ats043-060-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "State what a namespace separates and what it does not"
+    source_readings:
+      - sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+    prompt: "Which of these does a namespace separate?"
+    options:
+      - id: a
+        text: "The network between Pods"
+        explanation: "By default Pods reach each other across namespaces."
+      - id: b
+        text: "The scope of Roles, RoleBindings and ResourceQuota objects"
+        explanation: "Correct. These objects are namespaced."
+      - id: c
+        text: "The kernel of the node"
+        explanation: "All Pods on a node share its kernel."
+      - id: d
+        text: "Cluster-scoped objects such as nodes"
+        explanation: "These do not belong to a namespace."
+    correct_option: b
+    explanation: "A namespace separates names and the scope of policy objects, not nodes, kernel or network."
+
+  - id: ats043-060-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "State what a namespace separates and what it does not"
+    source_readings:
+      - sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+    prompt: "Pods in two namespaces have no NetworkPolicy. Can one reach a Service in the other?"
+    options:
+      - id: a
+        text: "No, namespaces block traffic."
+        explanation: "Namespaces do not filter traffic."
+      - id: b
+        text: "Yes, by its DNS name or IP address."
+        explanation: "Correct. The default network is open across namespaces."
+      - id: c
+        text: "Only through an Ingress."
+        explanation: "Direct Service access works."
+      - id: d
+        text: "Only with a ServiceAccount token."
+        explanation: "The network layer does not check identity."
+    correct_option: b
+    explanation: "Call the Service with `curl http://name.namespace.svc`."
+
+  - id: ats043-060-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use ResourceQuota and LimitRange to bound namespace use"
+    source_readings:
+      - sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+    prompt: "A namespace quota covers `requests.cpu` and there is no LimitRange. What happens to a new Pod with no CPU request?"
+    options:
+      - id: a
+        text: "It is admitted with a request of 0."
+        explanation: "The API server does not assume a value."
+      - id: b
+        text: "It is rejected because it must state a request."
+        explanation: "Correct. The API server cannot add it to the total."
+      - id: c
+        text: "It is admitted and counted at the quota value."
+        explanation: "No such rule exists."
+      - id: d
+        text: "It is admitted and the quota is ignored."
+        explanation: "The quota applies to every new Pod."
+    correct_option: b
+    explanation: "Add a LimitRange with `defaultRequest` so such Pods are admitted."
+
+  - id: ats043-060-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use ResourceQuota and LimitRange to bound namespace use"
+    source_readings:
+      - sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+    prompt: "You lower a quota below the current usage of a namespace. What happens to the running Pods?"
+    options:
+      - id: a
+        text: "They are evicted until usage fits."
+        explanation: "A quota never removes running objects."
+      - id: b
+        text: "They keep running. New objects that would exceed the quota are refused."
+        explanation: "Correct. The quota checks only new requests."
+      - id: c
+        text: "They are paused."
+        explanation: "Pods are not paused by quota."
+      - id: d
+        text: "The change is refused."
+        explanation: "A quota may be set below current use."
+    correct_option: b
+    explanation: "Check with `kubectl describe resourcequota`: used can be above hard."
+
+  - id: ats043-060-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Use ResourceQuota and LimitRange to bound namespace use"
+    source_readings:
+      - sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+    prompt: "A Pod has no memory limit. Which risk does a LimitRange default memory limit reduce?"
+    options:
+      - id: a
+        text: "The Pod reading other namespaces"
+        explanation: "A limit does not affect access."
+      - id: b
+        text: "One container using all node memory and triggering kernel kills for neighbors"
+        explanation: "Correct. The limit sets a cgroup cap per container."
+      - id: c
+        text: "Slow image pulls"
+        explanation: "Limits do not affect pulls."
+      - id: d
+        text: "Wrong DNS answers"
+        explanation: "Limits do not affect DNS."
+    correct_option: b
+    explanation: "The kernel kills the container that exceeds its own cap first."
+
+  - id: ats043-060-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Identify what Pods on one node still share"
+    source_readings:
+      - sections/section-060/module-01/course-02-node-and-runtime-isolation.md
+    prompt: "Which Pod field lets a container see every process on the node?"
+    options:
+      - id: a
+        text: "`hostNetwork: true`"
+        explanation: "This shares the network namespace."
+      - id: b
+        text: "`hostPID: true`"
+        explanation: "Correct. It shares the process ID namespace."
+      - id: c
+        text: "`hostIPC: true`"
+        explanation: "This shares inter-process communication objects."
+      - id: d
+        text: "`automountServiceAccountToken: true`"
+        explanation: "This controls a token mount."
+    correct_option: b
+    explanation: "Run `ps` inside such a Pod to see node processes."
+
+  - id: ats043-060-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Place workloads on dedicated nodes"
+    source_readings:
+      - sections/section-060/module-01/course-02-node-and-runtime-isolation.md
+    prompt: "A Pod has a toleration for the taint `tenant=blue:NoSchedule` and no node selector. Where may it run?"
+    options:
+      - id: a
+        text: "Only on the tainted nodes"
+        explanation: "A toleration allows, it does not require."
+      - id: b
+        text: "On the tainted nodes and on any node without a conflicting taint"
+        explanation: "Correct. Add a selector or affinity to restrict it."
+      - id: c
+        text: "Nowhere, a selector is mandatory"
+        explanation: "Tolerations alone are valid."
+      - id: d
+        text: "Only on the control plane"
+        explanation: "Unrelated to the toleration."
+    correct_option: b
+    explanation: "Dedicated nodes need a taint to keep others out and a selector to keep the tenant in."
+
+  - id: ats043-060-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Use RuntimeClass for sandboxed runtimes"
+    source_readings:
+      - sections/section-060/module-01/course-02-node-and-runtime-isolation.md
+    prompt: "You create a RuntimeClass with handler `runsc` on a node whose runtime has no such handler. What happens to a Pod that uses it?"
+    options:
+      - id: a
+        text: "It runs with the default runtime."
+        explanation: "There is no silent fallback."
+      - id: b
+        text: "It fails to start and the events name the missing runtime."
+        explanation: "Correct. The RuntimeClass is only a name."
+      - id: c
+        text: "It is rejected by the API server."
+        explanation: "The API server does not check the node."
+      - id: d
+        text: "It runs but is labeled unsafe."
+        explanation: "No such label exists."
+    correct_option: b
+    explanation: "The handler must be configured in the container runtime of every node that can run the Pod."
+
+  - id: ats043-060-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Find paths that join namespaces"
+    source_readings:
+      - sections/section-060/module-01/course-02-node-and-runtime-isolation.md
+    prompt: "Which object lets a ServiceAccount from namespace B act inside namespace A?"
+    options:
+      - id: a
+        text: "A RoleBinding in A that names the ServiceAccount from B as a subject"
+        explanation: "Correct. The binding gives the Role's permissions in A."
+      - id: b
+        text: "A ResourceQuota in A"
+        explanation: "Quotas do not grant access."
+      - id: c
+        text: "A LimitRange in B"
+        explanation: "Limit ranges do not grant access."
+      - id: d
+        text: "A taint on the node"
+        explanation: "Taints do not grant access."
+    correct_option: a
+    explanation: "List them with `kubectl get rolebindings -A -o json | jq`."
+

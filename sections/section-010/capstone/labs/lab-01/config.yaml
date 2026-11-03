@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Pod Security Standards Capstone (LAB). Graded against the live cluster. Harden a namespace and three workloads.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-capstone-010
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: beacon-meets-restricted
+      description: Every pod of beacon in orbit runs and meets the restricted level
+      type: file
+      source: validation/validate-beacon-meets-restricted.sh
+      hint: Add the full restricted securityContext and remove host access from beacon.
+    - name: relay-meets-restricted
+      description: Every pod of relay in orbit runs and meets the restricted level
+      type: file
+      source: validation/validate-relay-meets-restricted.sh
+      hint: Add the full restricted securityContext and remove host access from relay.
+    - name: cargo-meets-restricted
+      description: Every pod of cargo in orbit runs and meets the restricted level
+      type: file
+      source: validation/validate-cargo-meets-restricted.sh
+      hint: Add the full restricted securityContext and remove host access from cargo.
+    - name: orbit-labels
+      description: orbit enforces, warns and audits restricted with a pinned enforce version
+      type: file
+      source: validation/validate-orbit-labels.sh
+      hint: Use kubectl label namespace orbit with the enforce, warn and audit labels and enforce-version=v1.35.
+    - name: privileged-pod-refused
+      description: A privileged pod is refused in orbit
+      type: file
+      source: validation/validate-privileged-pod-refused.sh
+      hint: The enforce label makes the API server refuse privileged pods. Check the label first.
+    - name: workshop-untouched
+      description: workshop still runs tools and does not enforce baseline or restricted
+      type: file
+      source: validation/validate-workshop-untouched.sh
+      hint: Only label orbit. Do not change workshop.
+    - name: images-unchanged
+      description: The three Deployments in orbit keep their images
+      type: file
+      source: validation/validate-images-unchanged.sh
+      hint: Edit the Deployments instead of replacing them.
+
+teardown:
+  keepCluster: false

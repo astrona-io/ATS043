@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Pod Security Admission Decisions (LAB). Graded against the live cluster. Set admission modes and fix a violating Deployment.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-lab-020-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: dock-labels
+      description: dock enforces baseline (version v1.35) and warns and audits restricted
+      type: file
+      source: validation/validate-dock-labels.sh
+      hint: Use kubectl label namespace dock with enforce, enforce-version, warn and audit. Check each key for typos.
+    - name: tug-meets-baseline
+      description: Every pod of tug runs and meets the baseline level
+      type: file
+      source: validation/validate-tug-meets-baseline.sh
+      hint: Remove privileged true from the tug container, then wait for the rollout.
+    - name: privileged-pod-refused
+      description: A privileged pod is refused in dock
+      type: file
+      source: validation/validate-privileged-pod-refused.sh
+      hint: The enforce label must be set on dock. A dry run with a privileged pod must fail.
+    - name: baseline-pod-accepted
+      description: A pod that meets baseline but not restricted is accepted in dock
+      type: file
+      source: validation/validate-baseline-pod-accepted.sh
+      hint: Enforce baseline, not restricted. Restricted belongs in warn and audit.
+    - name: yard-untouched
+      description: yard has no enforce label and forklift still runs
+      type: file
+      source: validation/validate-yard-untouched.sh
+      hint: Only change dock. Leave yard and forklift as they are.
+
+teardown:
+  keepCluster: false

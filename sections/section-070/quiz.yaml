@@ -1,0 +1,197 @@
+# Knowledge check for section 070. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats043-070
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-070
+  title: "Audit"
+questions:
+  - id: ats043-070-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Read an audit event and name the caller, verb, target and result"
+    source_readings:
+      - sections/section-070/module-01/course-01-audit-events-stages-and-policy-levels.md
+    prompt: "Which event field holds the result that the API server returned?"
+    options:
+      - id: a
+        text: "`user.username`"
+        explanation: "This is the caller."
+      - id: b
+        text: "`responseStatus.code`"
+        explanation: "Correct. It holds the HTTP status code."
+      - id: c
+        text: "`objectRef.name`"
+        explanation: "This is the target."
+      - id: d
+        text: "`verb`"
+        explanation: "This is the action."
+    correct_option: b
+    explanation: "`RequestReceived` events have no `responseStatus`."
+
+  - id: ats043-070-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Read an audit event and name the caller, verb, target and result"
+    source_readings:
+      - sections/section-070/module-01/course-01-audit-events-stages-and-policy-levels.md
+    prompt: "A `kubectl delete` of a Deployment writes two events with the same `auditID`. Why?"
+    options:
+      - id: a
+        text: "The request is sent twice."
+        explanation: "The client sends it once."
+      - id: b
+        text: "Two stages produced an event: `RequestReceived` and `ResponseComplete`."
+        explanation: "Correct. Count actions from the completed stage."
+      - id: c
+        text: "One event is for the Deployment and one for its Pods."
+        explanation: "Both events refer to the same request."
+      - id: d
+        text: "The log writes every event twice."
+        explanation: "Duplicates are not written."
+    correct_option: b
+    explanation: "Omit `RequestReceived` to write one event per request."
+
+  - id: ats043-070-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write a policy that uses ordered rules, levels and omitted stages"
+    source_readings:
+      - sections/section-070/module-01/course-01-audit-events-stages-and-policy-levels.md
+    prompt: "A request matches the third and the fifth rule of a policy. Which level applies?"
+    options:
+      - id: a
+        text: "The level of the fifth rule, as the most recent"
+        explanation: "Rules are not applied in reverse."
+      - id: b
+        text: "The level of the third rule, as the first match"
+        explanation: "Correct. Later rules are not read."
+      - id: c
+        text: "The higher of the two levels"
+        explanation: "Levels are not compared."
+      - id: d
+        text: "No event is written because of the conflict"
+        explanation: "There is no conflict handling."
+    correct_option: b
+    explanation: "Put specific rules before broad ones."
+
+  - id: ats043-070-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write a policy that uses ordered rules, levels and omitted stages"
+    source_readings:
+      - sections/section-070/module-01/course-01-audit-events-stages-and-policy-levels.md
+    prompt: "Which level records the request body but not the response body?"
+    options:
+      - id: a
+        text: "`Metadata`"
+        explanation: "It records neither body."
+      - id: b
+        text: "`Request`"
+        explanation: "Correct."
+      - id: c
+        text: "`RequestResponse`"
+        explanation: "It records both bodies."
+      - id: d
+        text: "`None`"
+        explanation: "It records nothing."
+    correct_option: b
+    explanation: "`Request` and `RequestResponse` do not apply to non-resource URLs."
+
+  - id: ats043-070-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Record Secret access at the Metadata level so the log holds no secret values"
+    source_readings:
+      - sections/section-070/module-01/course-02-policy-design-and-log-protection.md
+    prompt: "Why should Secrets be recorded at `Metadata` and not at `RequestResponse`?"
+    options:
+      - id: a
+        text: "`Metadata` is faster to read."
+        explanation: "Speed is not the reason."
+      - id: b
+        text: "A response body holds the Secret data, so the log would hold the secret values in base64."
+        explanation: "Correct. Whoever reads the log reads the Secrets."
+      - id: c
+        text: "`RequestResponse` is not valid for Secrets."
+        explanation: "It is valid but unsafe."
+      - id: d
+        text: "`Metadata` records more fields."
+        explanation: "It records fewer."
+    correct_option: b
+    explanation: "`Metadata` still shows who read the Secret and when."
+
+  - id: ats043-070-q06
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Write a policy that uses ordered rules, levels and omitted stages"
+    source_readings:
+      - sections/section-070/module-01/course-02-policy-design-and-log-protection.md
+    prompt: "A policy starts with `- level: RequestResponse` and no match fields, then a Secret rule at `Metadata`. What happens to Secret requests?"
+    options:
+      - id: a
+        text: "They are recorded at `Metadata`."
+        explanation: "The Secret rule is never reached."
+      - id: b
+        text: "They are recorded at `RequestResponse`, with bodies."
+        explanation: "Correct. The first rule matches everything."
+      - id: c
+        text: "They are not recorded."
+        explanation: "The first rule records them."
+      - id: d
+        text: "The API server rejects the policy."
+        explanation: "The policy is valid."
+    correct_option: b
+    explanation: "Read each rule and ask what it takes away from the rules below."
+
+  - id: ats043-070-q07
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Name the ways evidence can be removed and the controls that reduce them"
+    source_readings:
+      - sections/section-070/module-01/course-02-policy-design-and-log-protection.md
+    prompt: "Which setup keeps audit evidence available after an attacker takes over the control plane node?"
+    options:
+      - id: a
+        text: "A log file only on the node"
+        explanation: "The attacker can change or delete it."
+      - id: b
+        text: "Events shipped to a store that control plane administrators cannot change"
+        explanation: "Correct. The copy lies outside the attacker's reach."
+      - id: c
+        text: "A longer `--audit-log-maxage`"
+        explanation: "It keeps files on the same node."
+      - id: d
+        text: "A `Metadata` level for every resource"
+        explanation: "The level does not protect the file."
+    correct_option: b
+    explanation: "Alert when events stop arriving."
+
+  - id: ats043-070-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Name the ways evidence can be removed and the controls that reduce them"
+    source_readings:
+      - sections/section-070/module-01/course-02-policy-design-and-log-protection.md
+    prompt: "A workload runs `kubectl exec` into a Pod and deletes a file inside the container. What does the audit log show?"
+    options:
+      - id: a
+        text: "The file name that was deleted"
+        explanation: "File access inside a container is not an API request."
+      - id: b
+        text: "The `exec` request against the `pods/exec` subresource, not the commands run in it"
+        explanation: "Correct. The API server sees only the request."
+      - id: c
+        text: "Nothing, `exec` is never recorded"
+        explanation: "The request is recorded if the policy matches it."
+      - id: d
+        text: "The full command output"
+        explanation: "Output is not stored."
+    correct_option: b
+    explanation: "Use runtime and application evidence for what happened inside the container."
+

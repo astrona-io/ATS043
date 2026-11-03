@@ -1,17 +1,29 @@
+# Section 010: Pod Security Standards
+
+Pod Security Standards (PSS) are three named sets of pod rules: Privileged, Baseline and Restricted. This section explains which pod fields each profile controls, what the kubelet and container runtime do with a security context, and how to bring a workload up to the Restricted profile.
+
+**Exam objective covered:** Pod Security Standards (Kubernetes Security Fundamentals, KCSA)
+
 ---
-draft: true
-exam_objectives:
-  - Pod Security Standards
+
+## What You Will Master
+
+- Compare the Privileged, Baseline and Restricted profiles
+- Explain what each securityContext field changes on the node
+- Fix a text user name, a writable path and a capability list so a workload passes Restricted
+- Distinguish a compliant pod specification from a secure application
+
 ---
-# Pod Security Standards
 
-This section teaches pod security profiles. These ideas help you explain system behavior and choose a suitable approach in a KCSA scenario.
+## The Learning Path
 
-You will work through Pod Security Profiles. Each module introduces its goals, teaches the concepts through examples, and closes with a summary. Reusable YAML checkpoints review related objectives after selected section summaries. The course assessment index records their placement and coverage.
+### 1. Pod Security Profiles
+*   **Module Reader:** **[Module 1: Pod Security Profiles](./module-01/course.md)**
+*   **Hands-on Playground:** `sections/section-010/module-01/playground` - a kind cluster with the Starfleet workloads, none hardened and no profile enforced.
+*   **Module Lab:** `sections/section-010/module-01/labs/lab-01` - make three Deployments in a restricted namespace meet the level.
 
-## Learning Outcomes
+### Capstone
+*   **Capstone Lab:** `sections/section-010/capstone/labs/lab-01` - label a namespace and harden three Deployments without touching a second namespace.
+*   **Knowledge Check:** `sections/section-010/quiz.yaml`
 
-- Compare Privileged, Baseline and Restricted profiles.
-- Explain the purpose and limits of security-context fields.
-- Relate image users and writable paths to profile compatibility.
-- Distinguish compliant configuration from complete application security.
+The labs and playgrounds are UNTESTED: they were built and checked statically only.

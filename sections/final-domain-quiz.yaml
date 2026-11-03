@@ -1,0 +1,388 @@
+# Domain review for ATS043. Listed in astrona.yaml as the final `type: quiz` entry.
+schema_version: 1
+kind: question_bank
+id: ats043-final
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: domain
+  id: kubernetes-security-fundamentals
+  title: "Kubernetes Security Fundamentals"
+questions:
+  - id: ats043-final-s010-q1
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Compare Privileged, Baseline and Restricted profiles"
+    source_readings:
+      - sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+    prompt: "A Restricted container drops ALL capabilities. Which capability may it add back?"
+    options:
+      - id: a
+        text: "SYS_ADMIN"
+        explanation: "SYS_ADMIN is not allowed in Baseline or Restricted."
+      - id: b
+        text: "CHOWN"
+        explanation: "CHOWN is allowed by Baseline but Restricted allows only one added capability."
+      - id: c
+        text: "NET_BIND_SERVICE"
+        explanation: "Correct. Restricted allows only NET_BIND_SERVICE to be added after `drop: [\"ALL\"]`."
+      - id: d
+        text: "Any capability that Baseline allows"
+        explanation: "Restricted narrows the list to one capability."
+    correct_option: c
+    explanation: "Restricted requires `drop: [\"ALL\"]` and allows only NET_BIND_SERVICE in `add`."
+
+  - id: ats043-final-s010-q2
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Distinguish compliant configuration from complete application security"
+    source_readings:
+      - sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+    prompt: "A Deployment template breaks the enforced level. What do you see?"
+    options:
+      - id: a
+        text: "The Deployment is rejected when you apply it."
+        explanation: "Enforce checks pod objects, not Deployments."
+      - id: b
+        text: "The Deployment is accepted and its ReplicaSet cannot create pods; the events show the rejection."
+        explanation: "Correct. The check runs on the pod object when the ReplicaSet controller creates it."
+      - id: c
+        text: "The existing pods are killed at once."
+        explanation: "Existing pods keep running; only new pods are checked."
+      - id: d
+        text: "The kubelet refuses the pod on the node."
+        explanation: "The decision is made by the API server at admission."
+    correct_option: b
+    explanation: "Enforcement applies to pods at creation. Read the ReplicaSet events."
+
+
+  - id: ats043-final-s020-q1
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write namespace labels that select a level and a version"
+    source_readings:
+      - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+    prompt: "A namespace has the label `pod-security.kubernetes.io/enforc: restricted`. What happens when a privileged pod is created there?"
+    options:
+      - id: a
+        text: "The pod is rejected."
+        explanation: "The key is misspelled, so the admission controller ignores it."
+      - id: b
+        text: "The pod is admitted without any decision from Pod Security Admission, because no valid label is present."
+        explanation: "Correct. Unknown label keys are stored and have no effect, so the default level applies."
+      - id: c
+        text: "The API server rejects the label."
+        explanation: "The API server accepts any label key."
+      - id: d
+        text: "Only a warning is shown."
+        explanation: "No mode is set, so no warning is sent."
+    correct_option: b
+    explanation: "A typo in a label key is silent. Check labels after setting them."
+
+  - id: ats043-final-s020-q2
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Identify exemptions and the limits of Pod Security Admission"
+    source_readings:
+      - sections/section-020/module-01/course-02-rollout-exemptions-and-limits.md
+    prompt: "Which three dimensions can the admission configuration exempt?"
+    options:
+      - id: a
+        text: "Usernames, runtime class names and namespaces"
+        explanation: "Correct. These are the three exemption lists."
+      - id: b
+        text: "Images, labels and nodes"
+        explanation: "These cannot be exempted."
+      - id: c
+        text: "Verbs, resources and groups"
+        explanation: "Those belong to RBAC."
+      - id: d
+        text: "Pods, Deployments and Jobs"
+        explanation: "Exemptions are not by object kind."
+    correct_option: a
+    explanation: "Exemptions are set in the admission configuration of the API server."
+
+
+  - id: ats043-final-s030-q1
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Distinguish authentication failure from authorization failure"
+    source_readings:
+      - sections/section-030/module-01/course-01-api-identity-and-serviceaccounts.md
+    prompt: "What does `kubectl --as=system:anonymous get pods` test?"
+    options:
+      - id: a
+        text: "Whether the API server accepts requests with no credential"
+        explanation: "Impersonation never removes your own credential."
+      - id: b
+        text: "The authorization decision for the impersonated identity"
+        explanation: "Correct. Authentication still uses your credential; authorization evaluates the impersonated user."
+      - id: c
+        text: "Whether anonymous authentication is enabled"
+        explanation: "This command cannot show the flag."
+      - id: d
+        text: "The audit policy"
+        explanation: "Audit is not tested by this command."
+    correct_option: b
+    explanation: "Impersonation changes the identity authorization sees, not how you authenticate."
+
+  - id: ats043-final-s030-q2
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Issue a user certificate through the CertificateSigningRequest API"
+    source_readings:
+      - sections/section-030/module-01/course-02-serviceaccount-tokens-and-client-certificates.md
+    prompt: "Why should an approver read a CSR subject before approving it?"
+    options:
+      - id: a
+        text: "The API server rejects any subject with a group."
+        explanation: "It does not; groups are allowed."
+      - id: b
+        text: "The signer writes the requested user name and groups into the certificate, so a request with `O=system:masters` becomes an administrator."
+        explanation: "Correct. The approver is the control."
+      - id: c
+        text: "Approval deletes the private key."
+        explanation: "The API server never sees the private key."
+      - id: d
+        text: "Approval creates a User object."
+        explanation: "Kubernetes has no User objects."
+    correct_option: b
+    explanation: "The approval step is the security check for CSRs."
+
+
+  - id: ats043-final-s040-q1
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Evaluate the effective permissions of an identity"
+    source_readings:
+      - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+    prompt: "A rule lists `resources: [\"pods\"]` and `verbs: [\"get\"]`. Can the user read pod logs with it?"
+    options:
+      - id: a
+        text: "Yes, logs are part of pods."
+        explanation: "Logs are the subresource pods/log."
+      - id: b
+        text: "No. The subresource `pods/log` must be named in the rule."
+        explanation: "Correct. Subresources are matched literally."
+      - id: c
+        text: "Yes, but only through `kubectl logs`."
+        explanation: "The API does not care which tool is used."
+      - id: d
+        text: "Only when `resourceNames` is set."
+        explanation: "resourceNames does not add subresources."
+    correct_option: b
+    explanation: "Name each subresource that you want to allow."
+
+  - id: ats043-final-s040-q2
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Identify verbs and bindings that allow privilege escalation"
+    source_readings:
+      - sections/section-040/module-01/course-02-dangerous-permissions-and-privilege-escalation.md
+    prompt: "Which verbs let a user bypass the check that prevents creating a role stronger than the user's own?"
+    options:
+      - id: a
+        text: "`get` and `list`"
+        explanation: "These only read."
+      - id: b
+        text: "`escalate` and `bind`"
+        explanation: "Correct. `escalate` allows writing stronger rules; `bind` allows binding a stronger role."
+      - id: c
+        text: "`patch` and `update`"
+        explanation: "These are checked by escalation prevention."
+      - id: d
+        text: "`watch` and `proxy`"
+        explanation: "These do not affect role creation."
+    correct_option: b
+    explanation: "Treat `escalate`, `bind` and `impersonate` as cluster administrator."
+
+
+  - id: ats043-final-s050-q1
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why base64 is not protection and what encryption at rest changes"
+    source_readings:
+      - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+    prompt: "You enable `aescbc` encryption with `identity` listed second. What happens to Secrets that already exist?"
+    options:
+      - id: a
+        text: "They are encrypted immediately."
+        explanation: "Only new writes are encrypted."
+      - id: b
+        text: "They stay in plain text until they are written again."
+        explanation: "Correct. Replace every Secret to re-encrypt it."
+      - id: c
+        text: "They are deleted."
+        explanation: "Nothing is deleted."
+      - id: d
+        text: "They become unreadable."
+        explanation: "The `identity` provider still reads them."
+    correct_option: b
+    explanation: "Run `kubectl get secrets -A -o json | kubectl replace -f -` after the restart."
+
+  - id: ats043-final-s050-q2
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict what happens to a running Pod when a Secret changes"
+    source_readings:
+      - sections/section-050/module-01/course-02-delivery-rotation-and-exposure-paths.md
+    prompt: "Which mount never receives a Secret update?"
+    options:
+      - id: a
+        text: "A volume mounted with a `defaultMode`"
+        explanation: "The mode does not stop updates."
+      - id: b
+        text: "A volume mounted read-only"
+        explanation: "Read-only mounts are updated."
+      - id: c
+        text: "A mount that uses `subPath`"
+        explanation: "Correct. The kubelet does not update subPath mounts."
+      - id: d
+        text: "A volume of a Secret with several keys"
+        explanation: "Several keys still update."
+    correct_option: c
+    explanation: "Avoid `subPath` when the file must refresh."
+
+
+  - id: ats043-final-s060-q1
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "State what a namespace separates and what it does not"
+    source_readings:
+      - sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+    prompt: "Pods in two namespaces have no NetworkPolicy. Can one reach a Service in the other?"
+    options:
+      - id: a
+        text: "No, namespaces block traffic."
+        explanation: "Namespaces do not filter traffic."
+      - id: b
+        text: "Yes, by its DNS name or IP address."
+        explanation: "Correct. The default network is open across namespaces."
+      - id: c
+        text: "Only through an Ingress."
+        explanation: "Direct Service access works."
+      - id: d
+        text: "Only with a ServiceAccount token."
+        explanation: "The network layer does not check identity."
+    correct_option: b
+    explanation: "Call the Service with `curl http://name.namespace.svc`."
+
+  - id: ats043-final-s060-q2
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Identify what Pods on one node still share"
+    source_readings:
+      - sections/section-060/module-01/course-02-node-and-runtime-isolation.md
+    prompt: "Which Pod field lets a container see every process on the node?"
+    options:
+      - id: a
+        text: "`hostNetwork: true`"
+        explanation: "This shares the network namespace."
+      - id: b
+        text: "`hostPID: true`"
+        explanation: "Correct. It shares the process ID namespace."
+      - id: c
+        text: "`hostIPC: true`"
+        explanation: "This shares inter-process communication objects."
+      - id: d
+        text: "`automountServiceAccountToken: true`"
+        explanation: "This controls a token mount."
+    correct_option: b
+    explanation: "Run `ps` inside such a Pod to see node processes."
+
+
+  - id: ats043-final-s070-q1
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write a policy that uses ordered rules, levels and omitted stages"
+    source_readings:
+      - sections/section-070/module-01/course-01-audit-events-stages-and-policy-levels.md
+    prompt: "Which level records the request body but not the response body?"
+    options:
+      - id: a
+        text: "`Metadata`"
+        explanation: "It records neither body."
+      - id: b
+        text: "`Request`"
+        explanation: "Correct."
+      - id: c
+        text: "`RequestResponse`"
+        explanation: "It records both bodies."
+      - id: d
+        text: "`None`"
+        explanation: "It records nothing."
+    correct_option: b
+    explanation: "`Request` and `RequestResponse` do not apply to non-resource URLs."
+
+  - id: ats043-final-s070-q2
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Name the ways evidence can be removed and the controls that reduce them"
+    source_readings:
+      - sections/section-070/module-01/course-02-policy-design-and-log-protection.md
+    prompt: "Which setup keeps audit evidence available after an attacker takes over the control plane node?"
+    options:
+      - id: a
+        text: "A log file only on the node"
+        explanation: "The attacker can change or delete it."
+      - id: b
+        text: "Events shipped to a store that control plane administrators cannot change"
+        explanation: "Correct. The copy lies outside the attacker's reach."
+      - id: c
+        text: "A longer `--audit-log-maxage`"
+        explanation: "It keeps files on the same node."
+      - id: d
+        text: "A `Metadata` level for every resource"
+        explanation: "The level does not protect the file."
+    correct_option: b
+    explanation: "Alert when events stop arriving."
+
+
+  - id: ats043-final-s080-q1
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write allow rules that use the Pod port and the right selectors"
+    source_readings:
+      - sections/section-080/module-01/course-01-how-networkpolicy-selects-and-allows-traffic.md
+    prompt: "A Service listens on port 80 and forwards to Pod port 9898. Which port goes in the policy?"
+    options:
+      - id: a
+        text: "80, the Service port"
+        explanation: "The policy is checked against the Pod port."
+      - id: b
+        text: "9898, the Pod port"
+        explanation: "Correct. The Service address is translated before the policy applies."
+      - id: c
+        text: "Both ports"
+        explanation: "Only the Pod port matters."
+      - id: d
+        text: "No port is allowed in a policy"
+        explanation: "`ports` is a valid field."
+    correct_option: b
+    explanation: "A rule for port 80 matches nothing and blocks the traffic."
+
+  - id: ats043-final-s080-q2
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Write egress rules that keep DNS working and combine selectors correctly"
+    source_readings:
+      - sections/section-080/module-01/course-02-egress-dns-and-cross-namespace-rules.md
+    prompt: "A `from` entry holds a `namespaceSelector` and a `podSelector` in the same item. How do they combine?"
+    options:
+      - id: a
+        text: "Either one must match"
+        explanation: "That is the form with two list items."
+      - id: b
+        text: "Both must match"
+        explanation: "Correct. This limits the source to one Pod label in one namespace."
+      - id: c
+        text: "Only the namespace is used"
+        explanation: "Both are used."
+      - id: d
+        text: "Only the Pod selector is used"
+        explanation: "Both are used."
+    correct_option: b
+    explanation: "A leading dash on the second selector turns it into a separate entry, which is an OR."
+

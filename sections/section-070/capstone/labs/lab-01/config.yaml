@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Audit Policy And Security Evidence Capstone (LAB). Graded against the live cluster. Audit logging with secret-safe levels, ConfigMap changes, dropped reads and log rotation.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-capstone-070
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: audit-logging-enabled
+      description: The API server runs with an audit policy file and writes /var/log/kubernetes/audit/audit.log
+      type: file
+      source: validation/validate-audit-logging-enabled.sh
+      hint: "Add --audit-policy-file and --audit-log-path to the kube-apiserver static pod manifest with volumes and mounts, then wait for the restart."
+    - name: rotation-flags
+      description: The log is rotated with maxsize, maxage and maxbackup so it cannot fill the disk or grow without limit
+      type: file
+      source: validation/validate-rotation-flags.sh
+      hint: "Add --audit-log-maxsize, --audit-log-maxage and --audit-log-maxbackup with values above 0."
+    - name: secret-metadata-only
+      description: A Secret read is recorded at Metadata level with no request or response body
+      type: file
+      source: validation/validate-secret-metadata-only.sh
+      hint: "Put the Secret rule before any rule that gives a higher level."
+    - name: configmaps-at-request
+      description: A ConfigMap create is recorded at Request level with the request body and no response body
+      type: file
+      source: validation/validate-configmaps-at-request.sh
+      hint: "Add a rule for configmaps with the verbs create, update, patch and delete at level Request, before the rule that drops reads."
+    - name: reads-dropped
+      description: Routine reads of Pods and ConfigMaps are not recorded while changes still are
+      type: file
+      source: validation/validate-reads-dropped.sh
+      hint: "Add a level None rule for the verbs get, list and watch after the Secret and ConfigMap rules."
+    - name: noise-dropped
+      description: Health checks and the RequestReceived stage are not recorded
+      type: file
+      source: validation/validate-noise-dropped.sh
+      hint: "Add a level None rule for the health paths and put RequestReceived in omitStages."
+
+teardown:
+  keepCluster: false

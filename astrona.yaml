@@ -1,9 +1,8 @@
-# Reading-only course. YAML assessments are registered separately in assessments/index.yaml.
+# Each module has a playground, a graded module lab and a quiz. Each section ends with a capstone lab. Layout: sections/section-0X0/{README.md,quiz.yaml,module-01/,capstone/}. Labs and playgrounds are untested.
 training:
   id: ATS043
   title: 'KCSA: Kubernetes Security Fundamentals'
-  description: Concept lessons, diagrams and original scenario assessments covering every published objective
-    in this KCSA domain. No labs or playgrounds.
+  description: Concept lessons, playgrounds, graded labs, capstones and quizzes covering every published objective in this KCSA domain.
   certification:
     name: Kubernetes and Cloud Native Security Associate
     code: KCSA
@@ -20,155 +19,459 @@ training:
     - Audit Logging
     - Network Policy
 modules:
-- id: module-intro
-  title: Introduction
-  description: Audience, learning approach, reading requirements and contribution process.
-  content:
-  - type: reading
+  - id: module-intro
     title: Introduction
-    path: sections/intro/README.md
-  - type: reading
-    title: Welcome To The Course
-    path: sections/intro/course-01-welcome.md
-  - type: reading
-    title: Get Your Machine Ready
-    path: sections/intro/course-02-get-your-machine-ready.md
-  - type: reading
-    title: How This Course Is Made
-    path: sections/intro/course-03-how-this-course-is-made.md
-- id: module-010
-  title: Pod Security Standards
-  description: Concept lessons and scenario reasoning for Pod Security Standards.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Pod Security Standards: Introduction'
-    path: sections/section-010/README.md
-  - type: reading
-    title: Pod Security Profiles
-    path: sections/section-010/module-01/course.md
-  - type: reading
-    title: Security Contexts And Profile Requirements
-    path: sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
-  - type: reading
-    title: Summary
-    path: sections/section-010/module-01/course-02-summary.md
-- id: module-020
-  title: Pod Security Admissions
-  description: Concept lessons and scenario reasoning for Pod Security Admissions.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Pod Security Admissions: Introduction'
-    path: sections/section-020/README.md
-  - type: reading
-    title: Pod Security Admission Decisions
-    path: sections/section-020/module-01/course.md
-  - type: reading
-    title: Applying Pod Security Requirements At Admission
-    path: sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
-  - type: reading
-    title: Summary
-    path: sections/section-020/module-01/course-02-summary.md
-- id: module-030
-  title: Authentication
-  description: Concept lessons and scenario reasoning for Authentication.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Authentication: Introduction'
-    path: sections/section-030/README.md
-  - type: reading
-    title: Authentication And Workload Credentials
-    path: sections/section-030/module-01/course.md
-  - type: reading
-    title: API Identity And ServiceAccounts
-    path: sections/section-030/module-01/course-01-api-identity-and-serviceaccounts.md
-  - type: reading
-    title: Summary
-    path: sections/section-030/module-01/course-02-summary.md
-- id: module-040
-  title: Authorization
-  description: Concept lessons and scenario reasoning for Authorization.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Authorization: Introduction'
-    path: sections/section-040/README.md
-  - type: reading
-    title: Authorization And Effective Permissions
-    path: sections/section-040/module-01/course.md
-  - type: reading
-    title: RBAC Grants And Their Consequences
-    path: sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
-  - type: reading
-    title: Summary
-    path: sections/section-040/module-01/course-02-summary.md
-- id: module-050
-  title: Secrets
-  description: Concept lessons and scenario reasoning for Secrets.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Secrets: Introduction'
-    path: sections/section-050/README.md
-  - type: reading
-    title: Secret Delivery And Credential Lifecycle
-    path: sections/section-050/module-01/course.md
-  - type: reading
-    title: Secret Storage, Delivery And Rotation
-    path: sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
-  - type: reading
-    title: Summary
-    path: sections/section-050/module-01/course-02-summary.md
-- id: module-060
-  title: Isolation and Segmentation
-  description: Concept lessons and scenario reasoning for Isolation and Segmentation.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Isolation and Segmentation: Introduction'
-    path: sections/section-060/README.md
-  - type: reading
-    title: Isolation And Namespace Segmentation
-    path: sections/section-060/module-01/course.md
-  - type: reading
-    title: Segmentation Across Trust Boundaries
-    path: sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
-  - type: reading
-    title: Summary
-    path: sections/section-060/module-01/course-02-summary.md
-- id: module-070
-  title: Audit Logging
-  description: Concept lessons and scenario reasoning for Audit Logging.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Audit Logging: Introduction'
-    path: sections/section-070/README.md
-  - type: reading
-    title: Audit Policy And Security Evidence
-    path: sections/section-070/module-01/course.md
-  - type: reading
-    title: Designing Useful And Protected Audit Records
-    path: sections/section-070/module-01/course-01-designing-useful-and-protected-audit-records.md
-  - type: reading
-    title: Summary
-    path: sections/section-070/module-01/course-02-summary.md
-- id: module-080
-  title: Network Policy
-  description: Concept lessons and scenario reasoning for Network Policy.
-  maturity: alpha
-  content:
-  - type: reading
-    title: 'Network Policy: Introduction'
-    path: sections/section-080/README.md
-  - type: reading
-    title: NetworkPolicy Semantics And Verification
-    path: sections/section-080/module-01/course.md
-  - type: reading
-    title: Traffic Isolation And Allowed Peers
-    path: sections/section-080/module-01/course-01-traffic-isolation-and-allowed-peers.md
-  - type: reading
-    title: Summary
-    path: sections/section-080/module-01/course-02-summary.md
+    description: Audience, learning approach, reading requirements and contribution process.
+    content:
+    - type: reading
+      title: Introduction
+      path: sections/intro/README.md
+    - type: reading
+      title: Welcome To The Course
+      path: sections/intro/course-01-welcome.md
+    - type: reading
+      title: Get Your Machine Ready
+      path: sections/intro/course-02-get-your-machine-ready.md
+    - type: reading
+      title: How This Course Is Made
+      path: sections/intro/course-03-how-this-course-is-made.md
+  - id: module-010
+    title: "Pod Security Standards"
+    description: "Security contexts, the Privileged, Baseline and Restricted profiles, and fixing workloads so they meet the Restricted profile."
+    status: alpha
+    content:
+      - type: reading
+        title: "Pod Security Standards: Introduction"
+        path: sections/section-010/README.md
+      - type: reading
+        title: "Pod Security Profiles"
+        path: sections/section-010/module-01/course.md
+      - type: reading
+        title: "Security Contexts And Profile Requirements"
+        path: sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+      - type: reading
+        title: "Profiles And Compliant Workloads"
+        path: sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+      - type: reading
+        title: Question
+        path: sections/section-010/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Pod Security Profiles Lab"
+        path: sections/section-010/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: workload-security
+        task_kind: migration
+        tags: [pod-security-standards, security-context, restricted, capabilities, hostpath, privileged]
+        learning_goals:
+          - Add a restricted securityContext with a numeric runAsUser
+          - Remove a hostPath volume and a privileged container
+          - Keep the namespace level and the Deployments intact
+      - type: reading
+        title: Summary
+        path: sections/section-010/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-010/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Pod Security Standards Capstone"
+        path: sections/section-010/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 30m
+        topic: workload-security
+        task_kind: build
+        tags: [pod-security-standards, pod-security-admission, restricted, hostpath, hostpid, privileged]
+        learning_goals:
+          - Enforce, warn and audit restricted with a pinned version
+          - Remove privileged, SYS_ADMIN, hostPID and hostPath from three Deployments
+          - Prove a privileged pod is refused and leave another namespace alone
+      - type: quiz
+        title: "Knowledge Check: Pod Security Standards"
+        path: sections/section-010/quiz.yaml
+        pass_score: 70
+  - id: module-020
+    title: "Pod Security Admissions"
+    description: "Namespace labels, enforce, audit and warn modes, version pinning, dry-run rollouts and exemptions."
+    status: alpha
+    content:
+      - type: reading
+        title: "Pod Security Admissions: Introduction"
+        path: sections/section-020/README.md
+      - type: reading
+        title: "Pod Security Admission"
+        path: sections/section-020/module-01/course.md
+      - type: reading
+        title: "Applying Pod Security Requirements At Admission"
+        path: sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+      - type: reading
+        title: "Rollout, Exemptions And Limits"
+        path: sections/section-020/module-01/course-02-rollout-exemptions-and-limits.md
+      - type: reading
+        title: Question
+        path: sections/section-020/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Pod Security Admission Lab"
+        path: sections/section-020/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: admission
+        task_kind: configuration
+        tags: [pod-security-admission, namespace-labels, enforce, warn, audit, baseline]
+        learning_goals:
+          - Set enforce, enforce-version, warn and audit labels
+          - Fix a privileged Deployment so it meets baseline
+          - Prove the decision with a server-side dry run and leave another namespace alone
+      - type: reading
+        title: Summary
+        path: sections/section-020/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-020/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Pod Security Admission Capstone"
+        path: sections/section-020/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 30m
+        topic: admission
+        task_kind: build
+        tags: [pod-security-admission, namespace-labels, hostnetwork, privileged, warn, audit]
+        learning_goals:
+          - Find and remove a misspelled label and enforce restricted
+          - Combine baseline enforcement with restricted warn and audit
+          - Report violations without blocking a legacy namespace
+      - type: quiz
+        title: "Knowledge Check: Pod Security Admissions"
+        path: sections/section-020/quiz.yaml
+        pass_score: 70
+  - id: module-030
+    title: "Authentication"
+    description: "Authenticator chain, 401 and 403, bound ServiceAccount tokens, automounting, legacy token Secrets and CertificateSigningRequests."
+    status: alpha
+    content:
+      - type: reading
+        title: "Authentication: Introduction"
+        path: sections/section-030/README.md
+      - type: reading
+        title: "Authentication And Workload Credentials"
+        path: sections/section-030/module-01/course.md
+      - type: reading
+        title: "How The API Server Authenticates Requests"
+        path: sections/section-030/module-01/course-01-api-identity-and-serviceaccounts.md
+      - type: reading
+        title: "ServiceAccount Tokens And Client Certificates"
+        path: sections/section-030/module-01/course-02-serviceaccount-tokens-and-client-certificates.md
+      - type: reading
+        title: Question
+        path: sections/section-030/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Workload Credentials Lab"
+        path: sections/section-030/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: authentication
+        task_kind: configuration
+        tags: [authentication, serviceaccount, token, csr, automount, legacy-secret]
+        learning_goals:
+          - Approve a CertificateSigningRequest after reading its subject
+          - Disable token automounting and replace running pods
+          - Delete a legacy token Secret and keep the workload available
+      - type: reading
+        title: Summary
+        path: sections/section-030/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-030/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Authentication And Workload Credentials Capstone"
+        path: sections/section-030/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 30m
+        topic: authentication
+        task_kind: build
+        tags: [authentication, csr, serviceaccount, rbac, legacy-secret, automount]
+        learning_goals:
+          - Approve a cadet CSR and deny a system:masters CSR
+          - Grant read-only access to the approved user
+          - Remove tokens from one workload and keep them for another
+      - type: quiz
+        title: "Knowledge Check: Authentication"
+        path: sections/section-030/quiz.yaml
+        pass_score: 70
+  - id: module-040
+    title: "Authorization"
+    description: "Roles, ClusterRoles, bindings, additive grants, subresources, Secret access, create pods, escalate, bind and impersonate."
+    status: alpha
+    content:
+      - type: reading
+        title: "Authorization: Introduction"
+        path: sections/section-040/README.md
+      - type: reading
+        title: "Authorization And Effective Permissions"
+        path: sections/section-040/module-01/course.md
+      - type: reading
+        title: "RBAC Grants And Their Consequences"
+        path: sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+      - type: reading
+        title: "Dangerous Permissions And Privilege Escalation"
+        path: sections/section-040/module-01/course-02-dangerous-permissions-and-privilege-escalation.md
+      - type: reading
+        title: Question
+        path: sections/section-040/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Least Privilege RBAC Lab"
+        path: sections/section-040/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: authorization
+        task_kind: migration
+        tags: [rbac, role, wildcard, least-privilege, unauthenticated, impersonation]
+        learning_goals:
+          - Rewrite a wildcard Role with exact verbs and resources
+          - Prove allowed and denied actions with can-i
+          - Remove a binding to system:unauthenticated
+      - type: reading
+        title: Summary
+        path: sections/section-040/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-040/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Authorization Capstone"
+        path: sections/section-040/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 30m
+        topic: authorization
+        task_kind: build
+        tags: [rbac, cluster-admin, escalate, bind, secrets, unauthenticated]
+        learning_goals:
+          - Replace a cluster-admin group binding with a namespace view binding
+          - Remove bind and escalate from a builder Role
+          - Remove Secret access and a public binding
+      - type: quiz
+        title: "Knowledge Check: Authorization"
+        path: sections/section-040/quiz.yaml
+        pass_score: 70
+  - id: module-050
+    title: "Secrets"
+    description: "Secret types, base64, encryption at rest, environment variables and volumes, immutable Secrets, rotation and exposure paths."
+    status: alpha
+    content:
+      - type: reading
+        title: "Secrets: Introduction"
+        path: sections/section-050/README.md
+      - type: reading
+        title: "Secrets And Sensitive Configuration"
+        path: sections/section-050/module-01/course.md
+      - type: reading
+        title: "Secret Storage And Encryption At Rest"
+        path: sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+      - type: reading
+        title: "Delivery, Rotation And Exposure Paths"
+        path: sections/section-050/module-01/course-02-delivery-rotation-and-exposure-paths.md
+      - type: reading
+        title: Question
+        path: sections/section-050/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Secret Rotation Lab"
+        path: sections/section-050/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: secrets
+        task_kind: migration
+        tags: [secrets, rotation, volume, environment, immutable]
+        learning_goals:
+          - Rotate a Secret value
+          - Replace an environment variable with a read-only Secret volume
+          - Mark the final Secret immutable
+      - type: reading
+        title: Summary
+        path: sections/section-050/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-050/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Secrets Capstone"
+        path: sections/section-050/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 30m
+        topic: secrets
+        task_kind: build
+        tags: [secrets, rotation, subpath, immutable, cleanup]
+        learning_goals:
+          - Switch one workload from an environment variable to a volume
+          - Remove subPath so a Secret refreshes
+          - Make both Secrets immutable and delete unused Secrets
+      - type: quiz
+        title: "Knowledge Check: Secrets"
+        path: sections/section-050/quiz.yaml
+        pass_score: 70
+  - id: module-060
+    title: "Isolation"
+    description: "Namespace boundaries, ResourceQuota, LimitRange, host namespace sharing, dedicated nodes, RuntimeClass and cross-namespace permissions."
+    status: alpha
+    content:
+      - type: reading
+        title: "Isolation: Introduction"
+        path: sections/section-060/README.md
+      - type: reading
+        title: "Isolation And Segmentation"
+        path: sections/section-060/module-01/course.md
+      - type: reading
+        title: "Namespaces And Resource Isolation"
+        path: sections/section-060/module-01/course-01-segmentation-across-trust-boundaries.md
+      - type: reading
+        title: "Node And Runtime Isolation"
+        path: sections/section-060/module-01/course-02-node-and-runtime-isolation.md
+      - type: reading
+        title: Question
+        path: sections/section-060/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Quota And Host Sharing Lab"
+        path: sections/section-060/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: isolation
+        task_kind: build
+        tags: [isolation, quota, limitrange, hostpid]
+        learning_goals:
+          - Create a ResourceQuota and a LimitRange
+          - Show that defaults are applied and an over-quota Pod is refused
+          - Remove hostPID from a Deployment
+      - type: reading
+        title: Summary
+        path: sections/section-060/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-060/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Isolation Capstone"
+        path: sections/section-060/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 30m
+        topic: isolation
+        task_kind: build
+        tags: [isolation, quota, cross-namespace, hostpath, rbac]
+        learning_goals:
+          - Create quotas and default limits in two namespaces
+          - Remove a cross-namespace RoleBinding and keep the local one
+          - Remove hostPID and a hostPath volume from a workload
+      - type: quiz
+        title: "Knowledge Check: Isolation"
+        path: sections/section-060/quiz.yaml
+        pass_score: 70
+  - id: module-070
+    title: "Audit"
+    description: "Audit events, stages, levels, policy rule order, Secrets at Metadata, log rotation, webhook backends and protecting the audit log."
+    status: alpha
+    content:
+      - type: reading
+        title: "Audit: Introduction"
+        path: sections/section-070/README.md
+      - type: reading
+        title: "Audit Policy And Security Evidence"
+        path: sections/section-070/module-01/course.md
+      - type: reading
+        title: "Audit Events, Stages And Policy Levels"
+        path: sections/section-070/module-01/course-01-audit-events-stages-and-policy-levels.md
+      - type: reading
+        title: "Policy Design And Log Protection"
+        path: sections/section-070/module-01/course-02-policy-design-and-log-protection.md
+      - type: reading
+        title: Question
+        path: sections/section-070/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "Audit Logging Policy Lab"
+        path: sections/section-070/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 25m
+        topic: audit
+        task_kind: build
+        tags: [audit, policy, secrets, apiserver]
+        learning_goals:
+          - Enable audit logging on the API server
+          - Record Secrets at Metadata and Deployments at RequestResponse
+          - Drop health checks and the RequestReceived stage
+      - type: reading
+        title: Summary
+        path: sections/section-070/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-070/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Audit Capstone"
+        path: sections/section-070/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 30m
+        topic: audit
+        task_kind: build
+        tags: [audit, policy, configmaps, rotation, reads]
+        learning_goals:
+          - Record Secrets at Metadata and ConfigMap changes at Request
+          - Drop routine reads and noise
+          - Set log rotation flags
+      - type: quiz
+        title: "Knowledge Check: Audit"
+        path: sections/section-070/quiz.yaml
+        pass_score: 70
+  - id: module-080
+    title: "Network Policy"
+    description: "Default deny, Pod selectors, namespace selectors, the Pod port, egress and DNS rules, and AND versus OR selector forms."
+    status: alpha
+    content:
+      - type: reading
+        title: "Network Policy: Introduction"
+        path: sections/section-080/README.md
+      - type: reading
+        title: "Traffic Isolation With NetworkPolicy"
+        path: sections/section-080/module-01/course.md
+      - type: reading
+        title: "How NetworkPolicy Selects And Allows Traffic"
+        path: sections/section-080/module-01/course-01-how-networkpolicy-selects-and-allows-traffic.md
+      - type: reading
+        title: "Egress, DNS And Cross-Namespace Rules"
+        path: sections/section-080/module-01/course-02-egress-dns-and-cross-namespace-rules.md
+      - type: reading
+        title: Question
+        path: sections/section-080/module-01/labs/lab-01/question.md
+      - type: lab
+        title: "NetworkPolicy Isolation Lab"
+        path: sections/section-080/module-01/labs/lab-01
+        difficulty: intermediate
+        estimated_duration: 20m
+        topic: networkpolicy
+        task_kind: build
+        tags: [networkpolicy, ingress, isolation]
+        learning_goals:
+          - Deny ingress to every Pod in a namespace
+          - Allow one caller on the Pod port
+          - Confirm other callers are blocked
+      - type: reading
+        title: Summary
+        path: sections/section-080/module-01/course-03-summary.md
+      - type: reading
+        title: Question
+        path: sections/section-080/capstone/labs/lab-01/question.md
+      - type: lab
+        title: "Network Isolation Capstone"
+        path: sections/section-080/capstone/labs/lab-01
+        difficulty: advanced
+        estimated_duration: 35m
+        topic: networkpolicy
+        task_kind: build
+        tags: [networkpolicy, egress, dns, selectors]
+        learning_goals:
+          - Default deny ingress and egress
+          - Allow DNS and one pair of workloads
+          - Allow one Pod from one namespace with an AND selector
+      - type: quiz
+        title: "Knowledge Check: Network Policy"
+        path: sections/section-080/quiz.yaml
+        pass_score: 70
+  - id: module-final
+    title: Final Knowledge Check
+    description: Review quiz across every section of the domain.
+    content:
+      - type: quiz
+        title: "Final Knowledge Check: Kubernetes Security Fundamentals"
+        path: sections/final-domain-quiz.yaml
+        pass_score: 70

@@ -1,0 +1,197 @@
+# Knowledge check for section 010. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats043-010
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-010
+  title: "Pod Security Standards"
+questions:
+  - id: ats043-010-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Compare Privileged, Baseline and Restricted profiles"
+    source_readings:
+      - sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+    prompt: "Which profile blocks hostPath volumes and privileged containers but still allows a container to run as root?"
+    options:
+      - id: a
+        text: "Privileged"
+        explanation: "Privileged has no restrictions."
+      - id: b
+        text: "Baseline"
+        explanation: "Correct. Baseline blocks host namespaces, privileged containers and hostPath volumes, but it does not require a non-root user."
+      - id: c
+        text: "Restricted"
+        explanation: "Restricted also requires a non-root user, so it does not match."
+      - id: d
+        text: "None of the profiles blocks hostPath"
+        explanation: "Baseline and Restricted both block hostPath volumes."
+    correct_option: b
+    explanation: "Baseline blocks the known host takeover paths. Only Restricted requires a non-root user."
+
+  - id: ats043-010-q02
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain the purpose and limits of security-context fields"
+    source_readings:
+      - sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+    prompt: "A pod sets only `runAsNonRoot: true`. The image sets `USER app` (a text name). What happens?"
+    options:
+      - id: a
+        text: "The container starts as the user app."
+        explanation: "The kubelet cannot prove that a text user name is not root."
+      - id: b
+        text: "The kubelet refuses to start the container because it cannot verify the user is non-zero."
+        explanation: "Correct. `runAsNonRoot` is a check. With a text user name and no numeric `runAsUser`, the kubelet cannot prove the UID is not 0."
+      - id: c
+        text: "The API server rejects the pod at admission."
+        explanation: "The check runs in the kubelet when the container starts, not at admission."
+      - id: d
+        text: "The container starts as UID 1."
+        explanation: "Kubernetes never picks a UID for you."
+    correct_option: b
+    explanation: "`runAsNonRoot` is a check made by the kubelet. A numeric `runAsUser` fixes the failure."
+
+  - id: ats043-010-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain the purpose and limits of security-context fields"
+    source_readings:
+      - sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+    prompt: "Which statement about `allowPrivilegeEscalation: false` is correct?"
+    options:
+      - id: a
+        text: "It removes all Linux capabilities from the container."
+        explanation: "Capabilities are controlled by `capabilities.drop`."
+      - id: b
+        text: "It sets the no_new_privs flag so a child process cannot gain more privileges than its parent."
+        explanation: "Correct. The runtime sets the Linux no_new_privs flag on the process."
+      - id: c
+        text: "It makes the root filesystem read-only."
+        explanation: "That is `readOnlyRootFilesystem`."
+      - id: d
+        text: "It forces the container to run as a non-root user."
+        explanation: "That is `runAsNonRoot` with `runAsUser`."
+    correct_option: b
+    explanation: "Each field closes one path. `allowPrivilegeEscalation: false` sets no_new_privs."
+
+  - id: ats043-010-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Compare Privileged, Baseline and Restricted profiles"
+    source_readings:
+      - sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+    prompt: "A Restricted container drops ALL capabilities. Which capability may it add back?"
+    options:
+      - id: a
+        text: "SYS_ADMIN"
+        explanation: "SYS_ADMIN is not allowed in Baseline or Restricted."
+      - id: b
+        text: "CHOWN"
+        explanation: "CHOWN is allowed by Baseline but Restricted allows only one added capability."
+      - id: c
+        text: "NET_BIND_SERVICE"
+        explanation: "Correct. Restricted allows only NET_BIND_SERVICE to be added after `drop: [\"ALL\"]`."
+      - id: d
+        text: "Any capability that Baseline allows"
+        explanation: "Restricted narrows the list to one capability."
+    correct_option: c
+    explanation: "Restricted requires `drop: [\"ALL\"]` and allows only NET_BIND_SERVICE in `add`."
+
+  - id: ats043-010-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Relate image users and writable paths to profile compatibility"
+    source_readings:
+      - sections/section-010/module-01/course-01-security-contexts-and-profile-requirements.md
+    prompt: "After you set `runAsUser: 10001`, an application fails because it cannot write to a root-owned directory. What is the best fix?"
+    options:
+      - id: a
+        text: "Set `runAsUser: 0`."
+        explanation: "Running as root removes the protection and fails Restricted."
+      - id: b
+        text: "Remove `securityContext` from the pod."
+        explanation: "This throws away all protections."
+      - id: c
+        text: "Mount an `emptyDir` volume at the writable path."
+        explanation: "Correct. A volume gives the non-root process a writable path while the restrictions stay."
+      - id: d
+        text: "Add `privileged: true`."
+        explanation: "Privileged is the opposite of hardening."
+    correct_option: c
+    explanation: "Give the process a writable volume instead of removing the restriction."
+
+  - id: ats043-010-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Distinguish compliant configuration from complete application security"
+    source_readings:
+      - sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+    prompt: "A Deployment template breaks the enforced level. What do you see?"
+    options:
+      - id: a
+        text: "The Deployment is rejected when you apply it."
+        explanation: "Enforce checks pod objects, not Deployments."
+      - id: b
+        text: "The Deployment is accepted and its ReplicaSet cannot create pods; the events show the rejection."
+        explanation: "Correct. The check runs on the pod object when the ReplicaSet controller creates it."
+      - id: c
+        text: "The existing pods are killed at once."
+        explanation: "Existing pods keep running; only new pods are checked."
+      - id: d
+        text: "The kubelet refuses the pod on the node."
+        explanation: "The decision is made by the API server at admission."
+    correct_option: b
+    explanation: "Enforcement applies to pods at creation. Read the ReplicaSet events."
+
+  - id: ats043-010-q07
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Distinguish compliant configuration from complete application security"
+    source_readings:
+      - sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+    prompt: "A user is allowed to create pods by RBAC. Their privileged pod in a Restricted namespace is refused. What is the cause?"
+    options:
+      - id: a
+        text: "Authentication failed."
+        explanation: "The user was authenticated, so the request reached admission."
+      - id: b
+        text: "RBAC denied the request."
+        explanation: "RBAC allowed it; the error is a PodSecurity Forbidden message."
+      - id: c
+        text: "Pod Security admission rejected the pod specification for breaking the level."
+        explanation: "Correct. Authorization and admission are separate checks."
+      - id: d
+        text: "The scheduler rejected it."
+        explanation: "The request never reaches the scheduler."
+    correct_option: c
+    explanation: "Admission checks the object after authentication and authorization have passed."
+
+  - id: ats043-010-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Distinguish compliant configuration from complete application security"
+    source_readings:
+      - sections/section-010/module-01/course-02-profiles-and-compliant-workloads.md
+    prompt: "Which control does the Restricted profile NOT require?"
+    options:
+      - id: a
+        text: "`allowPrivilegeEscalation: false`"
+        explanation: "This is required."
+      - id: b
+        text: "`readOnlyRootFilesystem: true`"
+        explanation: "Correct. It is good practice but no profile requires it."
+      - id: c
+        text: "`seccompProfile.type: RuntimeDefault` (or Localhost)"
+        explanation: "This is required."
+      - id: d
+        text: "A non-root user"
+        explanation: "This is required."
+    correct_option: b
+    explanation: "`readOnlyRootFilesystem` is not part of the Pod Security Standards."
+

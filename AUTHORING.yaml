@@ -1,5 +1,5 @@
 version: 1
-approval: KCSA-LESSON-PLAN.md approved; reading-only correction 2026-10-11
+approval: KCSA-LESSON-PLAN.md approved; reading-only rule overridden 2026-11-03 (labs, playgrounds, capstones, quizzes in scope)
 course:
   id: ATS043
   certification:
@@ -18,10 +18,10 @@ course:
     - Audit Logging
     - Network Policy
 defaults:
-  playground: false
-  module_lab: false
-  capstone: false
-  section_quiz: false
+  playground: true
+  module_lab: true
+  capstone: true
+  section_quiz: true
   final_quiz: true
 sections:
 - id: section-010
@@ -37,11 +37,11 @@ sections:
     - Distinguish compliant configuration from complete application security.
     outline:
     - Security Contexts And Profile Requirements
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
 - id: section-020
   title: Pod Security Admissions
   curriculum_item: Pod Security Admissions
@@ -55,11 +55,11 @@ sections:
     - Separate Pod Security Admission from RBAC and image verification.
     outline:
     - Applying Pod Security Requirements At Admission
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
 - id: section-030
   title: Authentication
   curriculum_item: Authentication
@@ -73,10 +73,10 @@ sections:
     - Relate authentication failure to the actual credential mechanism.
     outline:
     - API Identity And ServiceAccounts
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
+  capstone: true
   section_quiz: true
 - id: section-040
   title: Authorization
@@ -91,11 +91,11 @@ sections:
     - Apply least privilege to a workload identity.
     outline:
     - RBAC Grants And Their Consequences
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
 - id: section-050
   title: Secrets
   curriculum_item: Secrets
@@ -109,11 +109,11 @@ sections:
     - Describe rotation that updates consumers and revokes old authority.
     outline:
     - Secret Storage, Delivery And Rotation
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
 - id: section-060
   title: Isolation and Segmentation
   curriculum_item: Isolation and Segmentation
@@ -127,10 +127,10 @@ sections:
     - Identify residual access through legitimate dependencies.
     outline:
     - Segmentation Across Trust Boundaries
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
+  capstone: true
   section_quiz: true
 - id: section-070
   title: Audit Logging
@@ -145,11 +145,11 @@ sections:
     - Distinguish API evidence from runtime and application evidence.
     outline:
     - Designing Useful And Protected Audit Records
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
-  section_quiz: false
+  capstone: true
+  section_quiz: true
 - id: section-080
   title: Network Policy
   curriculum_item: Network Policy
@@ -163,9 +163,9 @@ sections:
     - Distinguish declared policy from actual implementation enforcement.
     outline:
     - Traffic Isolation And Allowed Peers
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     diagrams: []
-  capstone: false
+  capstone: true
   section_quiz: true
 assessment_format: YAML question banks, schema version 1; indexed in assessments/index.yaml

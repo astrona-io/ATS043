@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Pod Security Admission Capstone (LAB). Graded against the live cluster. Configure admission per namespace and fix three workloads.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-capstone-020
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: alpha-labels
+      description: alpha enforces restricted at v1.35 and the misspelled label is gone
+      type: file
+      source: validation/validate-alpha-labels.sh
+      hint: A misspelled key is ignored silently. Remove enforc and set enforce and enforce-version.
+    - name: beta-labels
+      description: beta enforces baseline and warns and audits restricted
+      type: file
+      source: validation/validate-beta-labels.sh
+      hint: Set enforce to baseline and warn and audit to restricted on beta.
+    - name: gamma-labels
+      description: gamma warns and audits baseline and has no enforce label
+      type: file
+      source: validation/validate-gamma-labels.sh
+      hint: gamma keeps its legacy agent. Use warn and audit only.
+    - name: web-meets-restricted
+      description: Every pod of web in alpha meets the restricted level
+      type: file
+      source: validation/validate-web-meets-restricted.sh
+      hint: Add the restricted securityContext with a numeric runAsUser and wait for the rollout.
+    - name: batch-meets-baseline
+      description: Every pod of batch in beta runs and meets the baseline level
+      type: file
+      source: validation/validate-batch-meets-baseline.sh
+      hint: Remove privileged from batch and wait for the rollout.
+    - name: admission-decisions
+      description: Privileged and hostNetwork pods are refused where enforced and gamma stays open
+      type: file
+      source: validation/validate-admission-decisions.sh
+      hint: Check the enforce label in alpha and beta. Do not add enforce to gamma.
+    - name: agent-untouched
+      description: agent in gamma still runs privileged with hostNetwork
+      type: file
+      source: validation/validate-agent-untouched.sh
+      hint: The legacy agent must not change. Only label gamma for warn and audit.
+
+teardown:
+  keepCluster: false

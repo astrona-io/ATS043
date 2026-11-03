@@ -1,0 +1,197 @@
+# Knowledge check for section 020. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats043-020
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-020
+  title: "Pod Security Admissions"
+questions:
+  - id: ats043-020-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Describe the enforce, audit and warn modes"
+    source_readings:
+      - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+    prompt: "Which Pod Security Admission mode rejects a pod that breaks the level?"
+    options:
+      - id: a
+        text: "warn"
+        explanation: "`warn` sends a warning to the user and still admits the pod."
+      - id: b
+        text: "audit"
+        explanation: "`audit` adds an annotation to the audit event and still admits the pod."
+      - id: c
+        text: "enforce"
+        explanation: "Correct. Only `enforce` rejects the pod."
+      - id: d
+        text: "exempt"
+        explanation: "`exempt` is a configuration list, not a mode."
+    correct_option: c
+    explanation: "Three modes exist: enforce, audit and warn. Only enforce blocks."
+
+  - id: ats043-020-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Write namespace labels that select a level and a version"
+    source_readings:
+      - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+    prompt: "Which label sets the enforced level to baseline?"
+    options:
+      - id: a
+        text: "`pod-security.kubernetes.io/enforce: baseline`"
+        explanation: "Correct. The key is `pod-security.kubernetes.io/<mode>` and the value is the level."
+      - id: b
+        text: "`pod-security.kubernetes.io/level: baseline`"
+        explanation: "There is no `level` key."
+      - id: c
+        text: "`security.kubernetes.io/enforce: baseline`"
+        explanation: "The prefix is `pod-security.kubernetes.io`."
+      - id: d
+        text: "`pod-security.kubernetes.io/baseline: enforce`"
+        explanation: "The mode is the key and the level is the value."
+    correct_option: a
+    explanation: "Mode in the key, level in the value."
+
+  - id: ats043-020-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write namespace labels that select a level and a version"
+    source_readings:
+      - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+    prompt: "A namespace has the label `pod-security.kubernetes.io/enforc: restricted`. What happens when a privileged pod is created there?"
+    options:
+      - id: a
+        text: "The pod is rejected."
+        explanation: "The key is misspelled, so the admission controller ignores it."
+      - id: b
+        text: "The pod is admitted without any decision from Pod Security Admission, because no valid label is present."
+        explanation: "Correct. Unknown label keys are stored and have no effect, so the default level applies."
+      - id: c
+        text: "The API server rejects the label."
+        explanation: "The API server accepts any label key."
+      - id: d
+        text: "Only a warning is shown."
+        explanation: "No mode is set, so no warning is sent."
+    correct_option: b
+    explanation: "A typo in a label key is silent. Check labels after setting them."
+
+  - id: ats043-020-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what each admission mode checks"
+    source_readings:
+      - sections/section-020/module-01/course-01-applying-pod-security-requirements-at-admission.md
+    prompt: "Which objects does the `enforce` mode check?"
+    options:
+      - id: a
+        text: "Deployments, StatefulSets and Jobs"
+        explanation: "Those objects are checked by `warn` and `audit` only."
+      - id: b
+        text: "Pod objects"
+        explanation: "Correct. Enforce checks pods, not workload objects."
+      - id: c
+        text: "Namespaces"
+        explanation: "Namespaces are not checked against a level."
+      - id: d
+        text: "Nodes"
+        explanation: "Nodes are not checked."
+    correct_option: b
+    explanation: "Workload objects are accepted. Their pods are refused later."
+
+  - id: ats043-020-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain what each admission mode checks"
+    source_readings:
+      - sections/section-020/module-01/course-02-rollout-exemptions-and-limits.md
+    prompt: "You set `enforce: baseline` on a namespace with a running privileged Deployment. What happens to the existing pods?"
+    options:
+      - id: a
+        text: "They are evicted at once."
+        explanation: "Existing pods are not re-checked."
+      - id: b
+        text: "They keep running, and the next replacement pod is refused."
+        explanation: "Correct. The check runs at creation, so the problem appears at the next rollout."
+      - id: c
+        text: "The Deployment is deleted."
+        explanation: "The controllers do not delete workloads."
+      - id: d
+        text: "The kubelet restarts them with a lower privilege."
+        explanation: "Pods are never changed in place."
+    correct_option: b
+    explanation: "Dry-run with `kubectl label --dry-run=server` first to see the effect."
+
+  - id: ats043-020-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Plan a safe rollout with a server-side dry run"
+    source_readings:
+      - sections/section-020/module-01/course-02-rollout-exemptions-and-limits.md
+    prompt: "Which command shows which existing pods would break baseline, without changing anything?"
+    options:
+      - id: a
+        text: "`kubectl label --dry-run=server --overwrite ns --all pod-security.kubernetes.io/enforce=baseline`"
+        explanation: "Correct. A server-side dry run returns warnings that name the pods."
+      - id: b
+        text: "`kubectl get pods --dry-run=client`"
+        explanation: "A client-side dry run does not contact admission."
+      - id: c
+        text: "`kubectl auth can-i create pods`"
+        explanation: "That tests authorization, not Pod Security."
+      - id: d
+        text: "`kubectl describe namespace`"
+        explanation: "That does not evaluate a level."
+    correct_option: a
+    explanation: "Use a server-side dry run to preview the effect on pods that already exist."
+
+  - id: ats043-020-q07
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Identify exemptions and the limits of Pod Security Admission"
+    source_readings:
+      - sections/section-020/module-01/course-02-rollout-exemptions-and-limits.md
+    prompt: "Which three dimensions can the admission configuration exempt?"
+    options:
+      - id: a
+        text: "Usernames, runtime class names and namespaces"
+        explanation: "Correct. These are the three exemption lists."
+      - id: b
+        text: "Images, labels and nodes"
+        explanation: "These cannot be exempted."
+      - id: c
+        text: "Verbs, resources and groups"
+        explanation: "Those belong to RBAC."
+      - id: d
+        text: "Pods, Deployments and Jobs"
+        explanation: "Exemptions are not by object kind."
+    correct_option: a
+    explanation: "Exemptions are set in the admission configuration of the API server."
+
+  - id: ats043-020-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Identify exemptions and the limits of Pod Security Admission"
+    source_readings:
+      - sections/section-020/module-01/course-02-rollout-exemptions-and-limits.md
+    prompt: "Which need is NOT met by Pod Security Admission alone?"
+    options:
+      - id: a
+        text: "Refusing a privileged pod in one namespace"
+        explanation: "This is exactly what enforce does."
+      - id: b
+        text: "Refusing a pod that uses a specific image registry"
+        explanation: "Correct. Pod Security Admission has no field for image registries; use a policy engine for that."
+      - id: c
+        text: "Warning users about a hostPath volume"
+        explanation: "`warn` does this."
+      - id: d
+        text: "Recording violations in the audit log"
+        explanation: "`audit` does this."
+    correct_option: b
+    explanation: "The built-in controller covers the standard profiles only; custom rules need another admission mechanism."
+

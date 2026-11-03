@@ -1,0 +1,197 @@
+# Knowledge check for section 040. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats043-040
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-040
+  title: "Authorization"
+questions:
+  - id: ats043-040-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Compare Role, ClusterRole, RoleBinding and ClusterRoleBinding"
+    source_readings:
+      - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+    prompt: "A RoleBinding in namespace `starfleet` points at the ClusterRole `view`. Where does the user get the permissions?"
+    options:
+      - id: a
+        text: "In every namespace"
+        explanation: "That would need a ClusterRoleBinding."
+      - id: b
+        text: "Only in `starfleet`"
+        explanation: "Correct. A RoleBinding limits the ClusterRole rules to its own namespace."
+      - id: c
+        text: "Only on cluster-scoped resources"
+        explanation: "A RoleBinding cannot grant cluster-scoped resources."
+      - id: d
+        text: "Nowhere, because the role kinds do not match"
+        explanation: "A RoleBinding may reference a ClusterRole."
+    correct_option: b
+    explanation: "This pattern reuses a rule list and limits its scope."
+
+  - id: ats043-040-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Evaluate the effective permissions of an identity"
+    source_readings:
+      - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+    prompt: "A user is bound to a Role that allows `get pods` and to another Role that allows `delete pods`. Which statement is correct?"
+    options:
+      - id: a
+        text: "The user can only get pods, because the first grant wins."
+        explanation: "Grants are not ordered."
+      - id: b
+        text: "The user can get and delete pods, because RBAC rules only add."
+        explanation: "Correct. The effective permissions are the union of all matching rules."
+      - id: c
+        text: "The binding is rejected as a conflict."
+        explanation: "Conflicts do not exist in RBAC."
+      - id: d
+        text: "The user can delete pods only if a deny rule exists."
+        explanation: "RBAC has no deny rules."
+    correct_option: b
+    explanation: "There is no deny. Remove or narrow a grant to remove a permission."
+
+  - id: ats043-040-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Evaluate the effective permissions of an identity"
+    source_readings:
+      - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+    prompt: "A rule lists `resources: [\"pods\"]` and `verbs: [\"get\"]`. Can the user read pod logs with it?"
+    options:
+      - id: a
+        text: "Yes, logs are part of pods."
+        explanation: "Logs are the subresource pods/log."
+      - id: b
+        text: "No. The subresource `pods/log` must be named in the rule."
+        explanation: "Correct. Subresources are matched literally."
+      - id: c
+        text: "Yes, but only through `kubectl logs`."
+        explanation: "The API does not care which tool is used."
+      - id: d
+        text: "Only when `resourceNames` is set."
+        explanation: "resourceNames does not add subresources."
+    correct_option: b
+    explanation: "Name each subresource that you want to allow."
+
+  - id: ats043-040-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Evaluate the effective permissions of an identity"
+    source_readings:
+      - sections/section-040/module-01/course-01-rbac-grants-and-their-consequences.md
+    prompt: "Which command shows whether the user `mira` may delete pods in `starfleet`, without logging in as her?"
+    options:
+      - id: a
+        text: "`kubectl auth can-i delete pods -n starfleet --as=mira`"
+        explanation: "Correct. Impersonation lets an administrator test another identity."
+      - id: b
+        text: "`kubectl get role mira`"
+        explanation: "There is no Role named after a user."
+      - id: c
+        text: "`kubectl describe user mira`"
+        explanation: "Kubernetes has no User object."
+      - id: d
+        text: "`kubectl auth whoami --as=mira -n starfleet`"
+        explanation: "whoami shows an identity, not permissions."
+    correct_option: a
+    explanation: "Use `--as` and `--as-group` to test an identity."
+
+  - id: ats043-040-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Identify verbs and bindings that allow privilege escalation"
+    source_readings:
+      - sections/section-040/module-01/course-02-dangerous-permissions-and-privilege-escalation.md
+    prompt: "Why is `list` on `secrets` as strong as `get` on every Secret in the namespace?"
+    options:
+      - id: a
+        text: "A list response contains the full objects, including their data."
+        explanation: "Correct. List returns every Secret value."
+      - id: b
+        text: "`list` implies `delete`."
+        explanation: "It does not."
+      - id: c
+        text: "Secrets are encrypted so `list` is harmless."
+        explanation: "The API returns decoded data to authorized callers."
+      - id: d
+        text: "`list` bypasses authentication."
+        explanation: "It does not."
+    correct_option: a
+    explanation: "Grant `get` on named Secrets only, or no access."
+
+  - id: ats043-040-q06
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Identify verbs and bindings that allow privilege escalation"
+    source_readings:
+      - sections/section-040/module-01/course-02-dangerous-permissions-and-privilege-escalation.md
+    prompt: "A user can create Pods in a namespace but cannot read Secrets. What can they still do?"
+    options:
+      - id: a
+        text: "Nothing related to Secrets"
+        explanation: "A Pod can mount a Secret and expose it."
+      - id: b
+        text: "Create a Pod that mounts a Secret and read the value from inside the container or its logs"
+        explanation: "Correct. The Secret mount is part of the Pod body, which authorization does not inspect."
+      - id: c
+        text: "Decrypt etcd"
+        explanation: "Pod creation does not reach etcd."
+      - id: d
+        text: "Change the Secret"
+        explanation: "Mounting does not allow writes."
+    correct_option: b
+    explanation: "`create pods` reads every Secret in the namespace."
+
+  - id: ats043-040-q07
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Identify verbs and bindings that allow privilege escalation"
+    source_readings:
+      - sections/section-040/module-01/course-02-dangerous-permissions-and-privilege-escalation.md
+    prompt: "Which verbs let a user bypass the check that prevents creating a role stronger than the user's own?"
+    options:
+      - id: a
+        text: "`get` and `list`"
+        explanation: "These only read."
+      - id: b
+        text: "`escalate` and `bind`"
+        explanation: "Correct. `escalate` allows writing stronger rules; `bind` allows binding a stronger role."
+      - id: c
+        text: "`patch` and `update`"
+        explanation: "These are checked by escalation prevention."
+      - id: d
+        text: "`watch` and `proxy`"
+        explanation: "These do not affect role creation."
+    correct_option: b
+    explanation: "Treat `escalate`, `bind` and `impersonate` as cluster administrator."
+
+  - id: ats043-040-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Apply least privilege to a user and a workload identity"
+    source_readings:
+      - sections/section-040/module-01/course-02-dangerous-permissions-and-privilege-escalation.md
+    prompt: "What does a binding to the group `system:authenticated` reach?"
+    options:
+      - id: a
+        text: "Only human users"
+        explanation: "ServiceAccounts count as authenticated."
+      - id: b
+        text: "Every identity that passed authentication, including every ServiceAccount"
+        explanation: "Correct. The group is far wider than it looks."
+      - id: c
+        text: "Only users with certificates"
+        explanation: "Tokens count as well."
+      - id: d
+        text: "Anonymous callers"
+        explanation: "Those belong to `system:unauthenticated`."
+    correct_option: b
+    explanation: "Avoid binding roles to broad groups."
+

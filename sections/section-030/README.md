@@ -1,17 +1,29 @@
+# Section 030: Authentication
+
+Authentication is the first check on every API request. This section explains how the API server derives an identity from a certificate, a token or no credential, how workloads get bound ServiceAccount tokens, and how people receive client certificates.
+
+**Exam objective covered:** Authentication (Kubernetes Security Fundamentals, KCSA)
+
 ---
-draft: true
-exam_objectives:
-  - Authentication
+
+## What You Will Master
+
+- Name the credential types the API server accepts
+- Distinguish a 401 from a 403
+- Explain bound ServiceAccount tokens and automounting
+- Issue and deny client certificates through the CSR API
+
 ---
-# Authentication
 
-This section teaches authentication and workload credentials. These ideas help you explain system behavior and choose a suitable approach in a KCSA scenario.
+## The Learning Path
 
-You will work through Authentication And Workload Credentials. Each module introduces its goals, teaches the concepts through examples, and closes with a summary. Reusable YAML checkpoints review related objectives after selected section summaries. The course assessment index records their placement and coverage.
+### 1. Authentication And Workload Credentials
+*   **Module Reader:** **[Module 1: Authentication And Workload Credentials](./module-01/course.md)**
+*   **Hands-on Playground:** `sections/section-030/module-01/playground` - a kind cluster with the Starfleet workloads, where you act as the cluster administrator.
+*   **Module Lab:** `sections/section-030/module-01/labs/lab-01` - approve a CSR and remove unneeded token credentials from a workload.
 
-## Learning Outcomes
+### Capstone
+*   **Capstone Lab:** `sections/section-030/capstone/labs/lab-01` - approve one CSR, deny another, limit tokens and delete legacy Secrets.
+*   **Knowledge Check:** `sections/section-030/quiz.yaml`
 
-- Distinguish established identity from granted API permission.
-- Explain ServiceAccount token audience and lifetime.
-- Identify unnecessary credential mounting and disclosure paths.
-- Relate authentication failure to the actual credential mechanism.
+The labs and playgrounds are UNTESTED: they were built and checked statically only.

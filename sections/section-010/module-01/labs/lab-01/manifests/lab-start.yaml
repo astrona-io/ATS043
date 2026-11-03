@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hangar
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fuel
+  namespace: hangar
+  labels:
+    app: fuel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fuel
+  template:
+    metadata:
+      labels:
+        app: fuel
+    spec:
+      containers:
+        - name: fuel
+          image: ghcr.io/stefanprodan/podinfo:6.15.0
+          ports:
+            - containerPort: 9898
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cargo
+  namespace: hangar
+  labels:
+    app: cargo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cargo
+  template:
+    metadata:
+      labels:
+        app: cargo
+    spec:
+      volumes:
+        - name: cargo-data
+          hostPath:
+            path: /tmp/cargo
+            type: DirectoryOrCreate
+      containers:
+        - name: cargo
+          image: ghcr.io/stefanprodan/podinfo:6.15.0
+          ports:
+            - containerPort: 9898
+          volumeMounts:
+            - name: cargo-data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relay
+  namespace: hangar
+  labels:
+    app: relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: relay
+  template:
+    metadata:
+      labels:
+        app: relay
+    spec:
+      containers:
+        - name: relay
+          image: mccutchen/go-httpbin:2.25.0
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi

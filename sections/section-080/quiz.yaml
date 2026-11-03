@@ -1,0 +1,220 @@
+# Knowledge check for section 080. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats043-080
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-080
+  title: "Network Policy"
+questions:
+  - id: ats043-080-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain how a NetworkPolicy selects Pods and changes what they accept"
+    source_readings:
+      - sections/section-080/module-01/course-01-how-networkpolicy-selects-and-allows-traffic.md
+    prompt: "A namespace has no NetworkPolicy. What traffic do its Pods accept?"
+    options:
+      - id: a
+        text: "Only traffic from the same namespace"
+        explanation: "No policy means no restriction by namespace."
+      - id: b
+        text: "All traffic"
+        explanation: "Correct. Pods are not isolated until a policy selects them."
+      - id: c
+        text: "No traffic"
+        explanation: "That needs a deny policy."
+      - id: d
+        text: "Only traffic from Services"
+        explanation: "Services do not restrict traffic."
+    correct_option: b
+    explanation: "A policy selects Pods for a direction. Only then does that direction become restricted."
+
+  - id: ats043-080-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain how a NetworkPolicy selects Pods and changes what they accept"
+    source_readings:
+      - sections/section-080/module-01/course-01-how-networkpolicy-selects-and-allows-traffic.md
+    prompt: "Which policy denies all ingress to every Pod in its namespace?"
+    options:
+      - id: a
+        text: "`podSelector: {}` with `policyTypes: [Ingress]` and no `ingress` rules"
+        explanation: "Correct. It selects all Pods and allows nothing."
+      - id: b
+        text: "`podSelector: {}` with an `ingress` rule that has an empty `from` list"
+        explanation: "An empty `from` list allows all sources."
+      - id: c
+        text: "No `podSelector`"
+        explanation: "`podSelector` is required."
+      - id: d
+        text: "`policyTypes: [Egress]` only"
+        explanation: "That isolates egress, not ingress."
+    correct_option: a
+    explanation: "Allowing is additive. A selected Pod accepts what any selecting policy allows."
+
+  - id: ats043-080-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write allow rules that use the Pod port and the right selectors"
+    source_readings:
+      - sections/section-080/module-01/course-01-how-networkpolicy-selects-and-allows-traffic.md
+    prompt: "A Service listens on port 80 and forwards to Pod port 9898. Which port goes in the policy?"
+    options:
+      - id: a
+        text: "80, the Service port"
+        explanation: "The policy is checked against the Pod port."
+      - id: b
+        text: "9898, the Pod port"
+        explanation: "Correct. The Service address is translated before the policy applies."
+      - id: c
+        text: "Both ports"
+        explanation: "Only the Pod port matters."
+      - id: d
+        text: "No port is allowed in a policy"
+        explanation: "`ports` is a valid field."
+    correct_option: b
+    explanation: "A rule for port 80 matches nothing and blocks the traffic."
+
+  - id: ats043-080-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write allow rules that use the Pod port and the right selectors"
+    source_readings:
+      - sections/section-080/module-01/course-01-how-networkpolicy-selects-and-allows-traffic.md
+    prompt: "Two policies select the same Pod for ingress. One allows `shuttle`, the other allows `probe`. What is accepted?"
+    options:
+      - id: a
+        text: "Only the first policy applied"
+        explanation: "Policies do not have an order."
+      - id: b
+        text: "Both `shuttle` and `probe`"
+        explanation: "Correct. Allowed sources are added together."
+      - id: c
+        text: "Nothing, they conflict"
+        explanation: "Policies never conflict. They only add."
+      - id: d
+        text: "Only traffic both policies allow"
+        explanation: "Allowing is a union, not an intersection."
+    correct_option: b
+    explanation: "There is no deny rule. Removing access means removing allow rules."
+
+  - id: ats043-080-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write allow rules that use the Pod port and the right selectors"
+    source_readings:
+      - sections/section-080/module-01/course-01-how-networkpolicy-selects-and-allows-traffic.md
+    prompt: "What does a `from` entry with only a `podSelector` match?"
+    options:
+      - id: a
+        text: "Pods with that label in any namespace"
+        explanation: "It is limited to one namespace."
+      - id: b
+        text: "Pods with that label in the policy's own namespace"
+        explanation: "Correct."
+      - id: c
+        text: "Every Pod in the cluster"
+        explanation: "The selector filters."
+      - id: d
+        text: "Only Pods on the same node"
+        explanation: "Nodes are not used."
+    correct_option: b
+    explanation: "Use a `namespaceSelector` to reach other namespaces."
+
+  - id: ats043-080-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Write egress rules that keep DNS working and combine selectors correctly"
+    source_readings:
+      - sections/section-080/module-01/course-02-egress-dns-and-cross-namespace-rules.md
+    prompt: "A default deny egress policy is applied. Pods can no longer call `http://scout.fleet.svc`, even to an allowed Pod. Why?"
+    options:
+      - id: a
+        text: "Services are blocked by default"
+        explanation: "They are not special."
+      - id: b
+        text: "Name lookups go to the DNS Pods and egress to them is denied"
+        explanation: "Correct. Add a DNS egress rule."
+      - id: c
+        text: "The curl binary is blocked"
+        explanation: "It is not."
+      - id: d
+        text: "Egress policies also block ingress"
+        explanation: "They affect egress only."
+    correct_option: b
+    explanation: "Allow port 53 over UDP and TCP to the DNS Pods."
+
+  - id: ats043-080-q07
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Write egress rules that keep DNS working and combine selectors correctly"
+    source_readings:
+      - sections/section-080/module-01/course-02-egress-dns-and-cross-namespace-rules.md
+    prompt: "A `from` entry holds a `namespaceSelector` and a `podSelector` in the same item. How do they combine?"
+    options:
+      - id: a
+        text: "Either one must match"
+        explanation: "That is the form with two list items."
+      - id: b
+        text: "Both must match"
+        explanation: "Correct. This limits the source to one Pod label in one namespace."
+      - id: c
+        text: "Only the namespace is used"
+        explanation: "Both are used."
+      - id: d
+        text: "Only the Pod selector is used"
+        explanation: "Both are used."
+    correct_option: b
+    explanation: "A leading dash on the second selector turns it into a separate entry, which is an OR."
+
+  - id: ats043-080-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Write egress rules that keep DNS working and combine selectors correctly"
+    source_readings:
+      - sections/section-080/module-01/course-02-egress-dns-and-cross-namespace-rules.md
+    prompt: "A policy lists `from: [ {namespaceSelector: ...}, {podSelector: ...} ]` as two items. Which sources are allowed?"
+    options:
+      - id: a
+        text: "Only Pods that match both selectors"
+        explanation: "That needs one item."
+      - id: b
+        text: "Any Pod in the matching namespaces, and matching Pods in the policy namespace"
+        explanation: "Correct. The items are alternatives."
+      - id: c
+        text: "No source"
+        explanation: "The policy is valid."
+      - id: d
+        text: "Any Pod in the cluster"
+        explanation: "The selectors still filter."
+    correct_option: b
+    explanation: "One small indentation change decides between AND and OR."
+
+  - id: ats043-080-q09
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Explain how a NetworkPolicy selects Pods and changes what they accept"
+    source_readings:
+      - sections/section-080/module-01/course-02-egress-dns-and-cross-namespace-rules.md
+    prompt: "`curl --max-time 5` prints `000` and exits with 28 when the call crosses a NetworkPolicy. What does this show?"
+    options:
+      - id: a
+        text: "The server returned an error"
+        explanation: "No response arrived at all."
+      - id: b
+        text: "The packets were dropped and the client waited for the timeout"
+        explanation: "Correct. A policy drops packets. It does not reject them."
+      - id: c
+        text: "The DNS name does not exist"
+        explanation: "A missing name fails at once with a different code."
+      - id: d
+        text: "The server was too slow"
+        explanation: "A drop is not a slow response."
+    correct_option: b
+    explanation: "Use a short timeout in tests so a blocked call does not wait long."
+

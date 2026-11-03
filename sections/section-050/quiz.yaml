@@ -1,0 +1,197 @@
+# Knowledge check for section 050. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats043-050
+course_id: ATS043
+exam_code: KCSA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-050
+  title: "Secrets"
+questions:
+  - id: ats043-050-q01
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain why base64 is not protection and what encryption at rest changes"
+    source_readings:
+      - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+    prompt: "What protection does the base64 encoding of a Secret value give?"
+    options:
+      - id: a
+        text: "It encrypts the value with the cluster key."
+        explanation: "Base64 uses no key."
+      - id: b
+        text: "None. Anyone can decode it with `base64 -d`."
+        explanation: "Correct. It is a reversible display encoding."
+      - id: c
+        text: "It hides the value from users with `get` permission."
+        explanation: "Authorized callers receive the encoded value and decode it."
+      - id: d
+        text: "It prevents the value from being written to etcd."
+        explanation: "The record is still stored."
+    correct_option: b
+    explanation: "Base64 is an encoding, not encryption."
+
+  - id: ats043-050-q02
+    type: single_choice
+    difficulty: beginner
+    learning_objective: "Explain why base64 is not protection and what encryption at rest changes"
+    source_readings:
+      - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+    prompt: "By default, how does the API server store a Secret in etcd?"
+    options:
+      - id: a
+        text: "Encrypted with a key held in the kubelet"
+        explanation: "No encryption is configured by default."
+      - id: b
+        text: "As received, so anyone with etcd or backup access can read it"
+        explanation: "Correct. Without an EncryptionConfiguration the value is stored in plain text."
+      - id: c
+        text: "Hashed so it cannot be read back"
+        explanation: "The value must be returned, so it cannot be hashed."
+      - id: d
+        text: "In a separate vault service"
+        explanation: "There is no built-in vault."
+    correct_option: b
+    explanation: "Check for `--encryption-provider-config` on the API server."
+
+  - id: ats043-050-q03
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why base64 is not protection and what encryption at rest changes"
+    source_readings:
+      - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+    prompt: "You enable `aescbc` encryption with `identity` listed second. What happens to Secrets that already exist?"
+    options:
+      - id: a
+        text: "They are encrypted immediately."
+        explanation: "Only new writes are encrypted."
+      - id: b
+        text: "They stay in plain text until they are written again."
+        explanation: "Correct. Replace every Secret to re-encrypt it."
+      - id: c
+        text: "They are deleted."
+        explanation: "Nothing is deleted."
+      - id: d
+        text: "They become unreadable."
+        explanation: "The `identity` provider still reads them."
+    correct_option: b
+    explanation: "Run `kubectl get secrets -A -o json | kubectl replace -f -` after the restart."
+
+  - id: ats043-050-q04
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Explain why base64 is not protection and what encryption at rest changes"
+    source_readings:
+      - sections/section-050/module-01/course-01-secret-storage-delivery-and-rotation.md
+    prompt: "A user has RBAC `get` on Secrets. Does encryption at rest stop them from reading values?"
+    options:
+      - id: a
+        text: "Yes, they receive ciphertext."
+        explanation: "The API server decrypts for authorized callers."
+      - id: b
+        text: "No. The API server decrypts the record before returning it."
+        explanation: "Correct. Encryption at rest protects etcd files and backups."
+      - id: c
+        text: "Only when `aesgcm` is used."
+        explanation: "No provider changes this."
+      - id: d
+        text: "Only for immutable Secrets."
+        explanation: "Immutability does not affect reads."
+    correct_option: b
+    explanation: "Control reads with RBAC. Encrypt etcd for storage protection."
+
+  - id: ats043-050-q05
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict what happens to a running Pod when a Secret changes"
+    source_readings:
+      - sections/section-050/module-01/course-02-delivery-rotation-and-exposure-paths.md
+    prompt: "A Secret is changed. The Pod reads it through an environment variable and through a volume. What does the container see a minute later?"
+    options:
+      - id: a
+        text: "Both values are new."
+        explanation: "Environment variables never change in a running container."
+      - id: b
+        text: "The environment variable is unchanged and the file has the new value."
+        explanation: "Correct. The kubelet refreshes volumes but cannot change a running process environment."
+      - id: c
+        text: "Both values are unchanged."
+        explanation: "The volume is refreshed."
+      - id: d
+        text: "The Pod restarts automatically."
+        explanation: "A Secret change never restarts a Pod."
+    correct_option: b
+    explanation: "Use a rollout for environment variables."
+
+  - id: ats043-050-q06
+    type: single_choice
+    difficulty: intermediate
+    learning_objective: "Predict what happens to a running Pod when a Secret changes"
+    source_readings:
+      - sections/section-050/module-01/course-02-delivery-rotation-and-exposure-paths.md
+    prompt: "Which mount never receives a Secret update?"
+    options:
+      - id: a
+        text: "A volume mounted with a `defaultMode`"
+        explanation: "The mode does not stop updates."
+      - id: b
+        text: "A volume mounted read-only"
+        explanation: "Read-only mounts are updated."
+      - id: c
+        text: "A mount that uses `subPath`"
+        explanation: "Correct. The kubelet does not update subPath mounts."
+      - id: d
+        text: "A volume of a Secret with several keys"
+        explanation: "Several keys still update."
+    correct_option: c
+    explanation: "Avoid `subPath` when the file must refresh."
+
+  - id: ats043-050-q07
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Rotate a credential and find the paths that expose it"
+    source_readings:
+      - sections/section-050/module-01/course-02-delivery-rotation-and-exposure-paths.md
+    prompt: "What is the correct last step of a credential rotation?"
+    options:
+      - id: a
+        text: "Update the Secret"
+        explanation: "This is an early step."
+      - id: b
+        text: "Restart the Pods"
+        explanation: "This is a middle step."
+      - id: c
+        text: "Revoke the old credential at the system that checks it"
+        explanation: "Correct. Until then the old value still works and is still exposed."
+      - id: d
+        text: "Print the new value to confirm"
+        explanation: "Never print the credential."
+    correct_option: c
+    explanation: "The goal of a rotation is to make the old value useless."
+
+  - id: ats043-050-q08
+    type: single_choice
+    difficulty: advanced
+    learning_objective: "Rotate a credential and find the paths that expose it"
+    source_readings:
+      - sections/section-050/module-01/course-02-delivery-rotation-and-exposure-paths.md
+    prompt: "Which place can hold a Secret value that you applied with `stringData`?"
+    options:
+      - id: a
+        text: "The `kubectl.kubernetes.io/last-applied-configuration` annotation"
+        explanation: "Correct. `kubectl apply` stores the manifest in this annotation."
+      - id: b
+        text: "The Pod name"
+        explanation: "Names do not contain values."
+      - id: c
+        text: "The node label"
+        explanation: "Labels do not contain values."
+      - id: d
+        text: "The image tag"
+        explanation: "Tags do not contain values."
+    correct_option: a
+    explanation: "Create sensitive Secrets with `kubectl create`, or keep manifests with values out of Git."
+

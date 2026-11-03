@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Network Isolation Capstone (LAB). Graded against the live cluster. Lock down the fleet namespace with default deny, DNS and narrow allow rules.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-capstone-080
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: shuttle-scout-allowed
+      description: shuttle reaches scout by name with DNS working
+      type: file
+      source: validation/validate-shuttle-scout-allowed.sh
+      hint: "With egress isolated, shuttle needs egress to kube-dns on port 53 and egress to scout on 9898. scout needs ingress from shuttle."
+    - name: drifter-probe-allowed
+      description: drifter in outpost reaches probe on port 8080
+      type: file
+      source: validation/validate-drifter-probe-allowed.sh
+      hint: "Allow ingress to probe from the namespace outpost AND the Pod label app=drifter, in one from entry, on the Pod port 8080."
+    - name: shuttle-probe-blocked
+      description: shuttle is blocked from probe
+      type: file
+      source: validation/validate-shuttle-probe-blocked.sh
+      hint: "probe accepts only drifter from outpost, and shuttle has no egress rule to probe."
+    - name: drifter-scout-blocked
+      description: drifter is blocked from scout
+      type: file
+      source: validation/validate-drifter-scout-blocked.sh
+      hint: "scout accepts ingress only from shuttle."
+    - name: intruder-probe-blocked
+      description: intruder in outpost is blocked from probe
+      type: file
+      source: validation/validate-intruder-probe-blocked.sh
+      hint: "A namespaceSelector and a podSelector in the same from entry both have to match."
+    - name: crane-egress-blocked
+      description: crane cannot reach beacon in outpost
+      type: file
+      source: validation/validate-crane-egress-blocked.sh
+      hint: "beacon has no policy, so only an egress policy in fleet can stop crane."
+
+teardown:
+  keepCluster: false

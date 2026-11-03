@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Pod Security Profiles (LAB). Graded against the live cluster. Three Deployments break the restricted level.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-lab-010-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: fuel-meets-restricted
+      description: Every pod of fuel runs and meets the restricted level
+      type: file
+      source: validation/validate-fuel-meets-restricted.sh
+      hint: Add runAsNonRoot, a numeric runAsUser, allowPrivilegeEscalation false, drop ALL and a RuntimeDefault seccomp profile to the fuel container.
+    - name: cargo-meets-restricted
+      description: Every pod of cargo runs and meets the restricted level
+      type: file
+      source: validation/validate-cargo-meets-restricted.sh
+      hint: Remove the hostPath volume (use emptyDir if it needs scratch space) and add the restricted securityContext.
+    - name: relay-meets-restricted
+      description: Every pod of relay runs and meets the restricted level
+      type: file
+      source: validation/validate-relay-meets-restricted.sh
+      hint: Remove privileged true and add the restricted securityContext with a numeric runAsUser such as 10001.
+    - name: namespace-still-enforces-restricted
+      description: The hangar namespace still enforces the restricted level
+      type: file
+      source: validation/validate-namespace-still-enforces-restricted.sh
+      hint: Fix the workloads. Do not weaken the namespace label.
+    - name: workloads-not-replaced
+      description: The three Deployments exist with their original images
+      type: file
+      source: validation/validate-workloads-not-replaced.sh
+      hint: Edit the Deployments. Do not delete them or change their images.
+
+teardown:
+  keepCluster: false

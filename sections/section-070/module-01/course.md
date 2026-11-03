@@ -1,24 +1,24 @@
----
-draft: true
-exam_objectives:
-  - Audit Logging
----
 # Audit Policy And Security Evidence
 
-This module develops the reasoning needed to explain what Kubernetes audit events record.
+The API server decides what happens in a cluster, and by default it keeps no record of who asked. Audit logging records each request with the caller, the action, the target and the result. This module shows how an audit policy chooses what is recorded, how to turn audit logging on for the API server, and how to keep the log useful and out of the wrong hands.
 
-## Learning Goals
+The module treats the log as evidence with a limited reach. It records requests to the Kubernetes API. It does not record commands typed inside a container, files read by an application or traffic between Pods.
 
-- Explain what Kubernetes audit events record.
-- Compare Metadata, Request and RequestResponse audit detail.
-- Relate audit retention and protection to investigation.
-- Distinguish API evidence from runtime and application evidence.
+The module has two parts. **Audit Events, Stages And Policy Levels** covers the event format, the four stages, the four levels and rule matching, and enables audit logging on the control plane of the playground. **Policy Design And Log Protection** covers Secrets and request bodies, rule order, noise, log rotation and webhook backends, and who can read or change the log.
 
-## Before You Start
+## Learning objectives
 
-Read the examples as descriptions of system behavior. No cluster, account, laboratory or installed tool is required. Technical terms are defined where they are used.
+After this module you can:
 
-## Reading Order
+- Read an audit event and name the caller, verb, target and result.
+- Write a policy that uses ordered rules, levels and omitted stages.
+- Record Secret access at the `Metadata` level so the log holds no secret values.
+- Name the ways an attacker or an error can remove evidence and the controls that reduce them.
 
-1. Designing Useful And Protected Audit Records
-2. Summary
+## Your playground
+
+The playground is a single-node `kind` cluster running Kubernetes 1.35. It has the namespace `starfleet` with `scout`, `probe` and `shuttle`, and the namespace `outpost` with `drifter`. Audit logging is off at the start. You run every `kubectl` command as the cluster administrator, and you reach the control plane node with `podman exec` (Docker users replace `podman` with `docker`). The control plane container is named `astro-ats-043-playground-070-01-control-plane`.
+
+Launch the playground now and keep it running while you read:
+
+<!-- astrona:playground -->

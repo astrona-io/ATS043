@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: bay-quota
+  namespace: bay
+spec:
+  hard:
+    pods: "6"
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.memory: 2Gi
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: bay-limits
+  namespace: bay
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 50m
+        memory: 32Mi
+      default:
+        memory: 128Mi

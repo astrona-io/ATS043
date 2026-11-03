@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Isolation And Segmentation Capstone (LAB). Graded against the live cluster. Quotas, defaults, cross-namespace access and host sharing in two tenants.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-capstone-060
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: quotas
+      description: Both tenants have a ResourceQuota tenant-quota with the required limits
+      type: file
+      source: validation/validate-quotas.sh
+      hint: "Create ResourceQuota tenant-quota in tenant-a and tenant-b with the values in the task."
+    - name: limitranges
+      description: Both tenants have a LimitRange tenant-limits with default requests and a default memory limit
+      type: file
+      source: validation/validate-limitranges.sh
+      hint: "Create LimitRange tenant-limits in both namespaces: defaultRequest cpu 50m and memory 32Mi, default memory 128Mi."
+    - name: defaults-applied
+      description: A Pod without resources gets the memory default in both tenants
+      type: file
+      source: validation/validate-defaults-applied.sh
+      hint: "A server-side dry run of a Pod without resources shows the injected values."
+    - name: cross-namespace-access
+      description: tenant-b ops-sa has no access in tenant-a but keeps edit in tenant-b
+      type: file
+      source: validation/validate-cross-namespace-access.sh
+      hint: "Delete only the RoleBinding in tenant-a. Keep ops-edit in tenant-b."
+    - name: probe-isolated
+      description: probe in tenant-b shares no host PID namespace or host path and is available
+      type: file
+      source: validation/validate-probe-isolated.sh
+      hint: "Remove hostPID, the hostPath volume and its mount from the probe pod template."
+    - name: scout-available
+      description: scout in tenant-a is still available
+      type: file
+      source: validation/validate-scout-available.sh
+      hint: "Do not delete or scale scout."
+
+teardown:
+  keepCluster: false

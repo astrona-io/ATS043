@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Authentication And Workload Credentials Capstone (LAB). Graded against the live cluster. Issue, deny and limit credentials across one namespace.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-capstone-030
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: rowan-certificate
+      description: CSR rowan-csr is approved with CN=rowan, O=cadets
+      type: file
+      source: validation/validate-rowan-certificate.sh
+      hint: Approve rowan-csr after you read its subject.
+    - name: intruder-denied
+      description: CSR intruder-csr is denied and has no certificate
+      type: file
+      source: validation/validate-intruder-denied.sh
+      hint: Read the subject of intruder-csr. A request for system:masters must be denied with kubectl certificate deny.
+    - name: rowan-permissions
+      description: rowan can list pods in fleet and cannot delete them
+      type: file
+      source: validation/validate-rowan-permissions.sh
+      hint: Create a RoleBinding in fleet that grants the built-in view role to the user rowan or the group cadets. view does not include Secrets.
+    - name: shuttle-no-token
+      description: shuttle-sa disables automounting and shuttle pods carry no token
+      type: file
+      source: validation/validate-shuttle-no-token.sh
+      hint: Patch the ServiceAccount, then restart the Deployment so new pods have no token volume.
+    - name: drifter-keeps-token
+      description: drifter still mounts a token and is available
+      type: file
+      source: validation/validate-drifter-keeps-token.sh
+      hint: drifter calls the API. Do not disable automounting for drifter-sa.
+    - name: legacy-secrets
+      description: Both legacy token Secrets in fleet are deleted
+      type: file
+      source: validation/validate-legacy-secrets.sh
+      hint: List Secrets of type kubernetes.io/service-account-token. The pod token of drifter does not come from a Secret.
+
+teardown:
+  keepCluster: false

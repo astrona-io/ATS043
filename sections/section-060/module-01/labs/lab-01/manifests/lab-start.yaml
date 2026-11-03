@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bay
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drifter
+  namespace: bay
+  labels:
+    app: drifter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drifter
+  template:
+    metadata:
+      labels:
+        app: drifter
+    spec:
+      containers:
+        - name: drifter
+          image: curlimages/curl:8.22.0
+          ports:
+            - containerPort: 8080
+          command: ["sleep", "86400"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crane
+  namespace: bay
+  labels:
+    app: crane
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crane
+  template:
+    metadata:
+      labels:
+        app: crane
+    spec:
+      hostPID: true
+      containers:
+        - name: crane
+          image: curlimages/curl:8.22.0
+          ports:
+            - containerPort: 8080
+          command: ["sleep", "86400"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi

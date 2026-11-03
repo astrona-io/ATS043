@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Traffic Isolation With NetworkPolicy (LAB). Graded against the live cluster. Allow only shuttle to reach scout and deny everything else.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-lab-080-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: shuttle-allowed
+      description: shuttle in harbor reaches scout on its Pod port
+      type: file
+      source: validation/validate-shuttle-allowed.sh
+      hint: "Allow ingress to the scout Pods from the Pods labelled app=shuttle on TCP port 9898, the Pod port."
+    - name: probe-blocked
+      description: probe in the same namespace is blocked from scout
+      type: file
+      source: validation/validate-probe-blocked.sh
+      hint: "A NetworkPolicy that selects scout for Ingress allows only the listed peers."
+    - name: drifter-blocked
+      description: drifter in outpost is blocked from scout
+      type: file
+      source: validation/validate-drifter-blocked.sh
+      hint: "The namespace of the caller does not matter once scout is isolated. Only shuttle may call it."
+    - name: scout-available
+      description: scout in harbor is still available
+      type: file
+      source: validation/validate-scout-available.sh
+      hint: "Do not delete or scale scout."
+
+teardown:
+  keepCluster: false

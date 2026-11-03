@@ -1,17 +1,29 @@
+# Section 080: Network Policy
+
+By default every Pod can talk to every other Pod. NetworkPolicy lets you restrict that. This section shows how a policy selects Pods, how allow rules add up, how egress rules and DNS work and how the selector forms combine across namespaces.
+
+**Exam objective covered:** Network Policy (Kubernetes Security Fundamentals, KCSA)
+
 ---
-draft: true
-exam_objectives:
-  - Network Policy
+
+## What You Will Master
+
+- Explain how a NetworkPolicy selects Pods and changes what they accept
+- Write allow rules that use the Pod port and the right selectors
+- Write egress rules that keep DNS working
+- Combine namespace and Pod selectors with the intended meaning
+
 ---
-# Network Policy
 
-This section teaches networkpolicy semantics and verification. These ideas help you explain system behavior and choose a suitable approach in a KCSA scenario.
+## The Learning Path
 
-You will work through NetworkPolicy Semantics And Verification. Each module introduces its goals, teaches the concepts through examples, and closes with a summary. Reusable YAML checkpoints review related objectives after selected section summaries. The course assessment index records their placement and coverage.
+### 1. Traffic Isolation With NetworkPolicy
+*   **Module Reader:** **[Module 1: Traffic Isolation With NetworkPolicy](./module-01/course.md)**
+*   **Hands-on Playground:** `sections/section-080/module-01/playground` - a kind cluster with the Starfleet workloads and no NetworkPolicy, on a network plugin that enforces policies.
+*   **Module Lab:** `sections/section-080/module-01/labs/lab-01` - default deny ingress and allow only one caller.
 
-## Learning Outcomes
+### Capstone
+*   **Capstone Lab:** `sections/section-080/capstone/labs/lab-01` - lock down a namespace with default deny, DNS and narrow allow rules.
+*   **Knowledge Check:** `sections/section-080/quiz.yaml`
 
-- Explain Pod selection and direction-specific network isolation.
-- Evaluate additive allowed rules and selector structure.
-- Relate DNS and dependencies to egress requirements.
-- Distinguish declared policy from actual implementation enforcement.
+The labs and playgrounds are UNTESTED: they were built and checked statically only.

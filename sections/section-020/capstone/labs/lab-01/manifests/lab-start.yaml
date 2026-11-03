@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: alpha
+  labels:
+    pod-security.kubernetes.io/enforc: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: beta
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gamma
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: alpha
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/stefanprodan/podinfo:6.15.0
+          ports:
+            - containerPort: 9898
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: batch
+  namespace: beta
+  labels:
+    app: batch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: batch
+  template:
+    metadata:
+      labels:
+        app: batch
+    spec:
+      containers:
+        - name: batch
+          image: mccutchen/go-httpbin:2.25.0
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent
+  namespace: gamma
+  labels:
+    app: agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent
+  template:
+    metadata:
+      labels:
+        app: agent
+    spec:
+      hostNetwork: true
+      containers:
+        - name: agent
+          image: mccutchen/go-httpbin:2.25.0
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi

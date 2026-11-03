@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Secrets And Sensitive Configuration (LAB). Graded against the live cluster. Rotate a Secret, switch delivery to a volume and make it immutable.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-lab-050-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: rotated
+      description: Secret db-password holds new-value and the running scout pod reads new-value
+      type: file
+      source: validation/validate-rotated.sh
+      hint: Change the stored value, then make sure the running pod reads it. Pods created before the change keep old environment values.
+    - name: volume-delivery
+      description: scout gets the password from a read-only Secret volume at /etc/scout and has no secret environment variable
+      type: file
+      source: validation/validate-volume-delivery.sh
+      hint: Replace the secretKeyRef with a secret volume mounted read-only at /etc/scout. Do not use subPath.
+    - name: immutable
+      description: Secret db-password is immutable
+      type: file
+      source: validation/validate-immutable.sh
+      hint: Set immutable to true after the value is final. An immutable Secret cannot change again.
+    - name: scout-available
+      description: Deployment scout in vault is available
+      type: file
+      source: validation/validate-scout-available.sh
+      hint: Wait for the rollout to finish.
+
+teardown:
+  keepCluster: false

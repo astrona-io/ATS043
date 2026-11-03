@@ -6,26 +6,26 @@ Verified against the [official objectives](https://training.linuxfoundation.org/
 
 | Section | Official objective | Modules | Status |
 | --- | --- | --- | --- |
-| 010 | Pod Security Standards | 1 | Written; review pending |
-| 020 | Pod Security Admissions | 1 | Written; review pending |
-| 030 | Authentication | 1 | Written; review pending |
-| 040 | Authorization | 1 | Written; review pending |
-| 050 | Secrets | 1 | Written; review pending |
-| 060 | Isolation and Segmentation | 1 | Written; review pending |
-| 070 | Audit Logging | 1 | Written; review pending |
-| 080 | Network Policy | 1 | Written; review pending |
+| 010 | Pod Security Standards | 1 | Built; labs untested; review pending |
+| 020 | Pod Security Admissions | 1 | Built; labs untested; review pending |
+| 030 | Authentication | 1 | Built; labs untested; review pending |
+| 040 | Authorization | 1 | Built; labs untested; review pending |
+| 050 | Secrets | 1 | Built; labs untested; review pending |
+| 060 | Isolation and Segmentation | 1 | Built; labs untested; review pending |
+| 070 | Audit Logging | 1 | Built; labs untested; review pending |
+| 080 | Network Policy | 1 | Built; labs untested; review pending |
 
 | Section / module | Module | Teaching lessons | Measurable outcomes |
 | --- | --- | --- | --- |
-| 010 / 01 | Pod Security Profiles | 1 | Compare Privileged, Baseline and Restricted profiles.; Explain the purpose and limits of security-context fields.; Relate image users and writable paths to profile compatibility.; Distinguish compliant configuration from complete application security. |
-| 020 / 01 | Pod Security Admission Decisions | 1 | Distinguish enforce, warn and audit policy modes.; Explain namespace policy labels and version selection.; Predict the effect of policy changes on new workload Pods.; Separate Pod Security Admission from RBAC and image verification. |
-| 030 / 01 | Authentication And Workload Credentials | 1 | Distinguish established identity from granted API permission.; Explain ServiceAccount token audience and lifetime.; Identify unnecessary credential mounting and disclosure paths.; Relate authentication failure to the actual credential mechanism. |
-| 040 / 01 | Authorization And Effective Permissions | 1 | Compare Role, ClusterRole, RoleBinding and ClusterRoleBinding.; Evaluate namespace scope, verbs, resources and subjects.; Explain additive grants and indirect privilege.; Apply least privilege to a workload identity. |
-| 050 / 01 | Secret Delivery And Credential Lifecycle | 1 | Explain why Secret encoding is not encryption.; Compare environment and mounted-file update behavior.; Identify authorization and diagnostic exposure risks.; Describe rotation that updates consumers and revokes old authority. |
-| 060 / 01 | Isolation And Namespace Segmentation | 1 | Distinguish namespace scope from physical or kernel isolation.; Compare API, network, process and resource controls.; Relate shared-node trust to workload compromise.; Identify residual access through legitimate dependencies. |
-| 070 / 01 | Audit Policy And Security Evidence | 1 | Explain what Kubernetes audit events record.; Compare Metadata, Request and RequestResponse audit detail.; Relate audit retention and protection to investigation.; Distinguish API evidence from runtime and application evidence. |
-| 080 / 01 | NetworkPolicy Semantics And Verification | 1 | Explain Pod selection and direction-specific network isolation.; Evaluate additive allowed rules and selector structure.; Relate DNS and dependencies to egress requirements.; Distinguish declared policy from actual implementation enforcement. |
+| 010 / 01 | Pod Security Profiles | 1 | Compare the Privileged, Baseline and Restricted profiles; Explain what each securityContext field changes on the node; Fix a text user name, a writable path and a capability list so a workload passes Restricted; Distinguish a compliant pod specification from a secure application. |
+| 020 / 01 | Pod Security Admission | 1 | Write namespace labels that select a level and a version; Explain what enforce, audit and warn each do; Plan a safe rollout with a server-side dry run; Name the exemptions and the limits of the controller. |
+| 030 / 01 | Authentication And Workload Credentials | 1 | Name the credential types the API server accepts; Distinguish a 401 from a 403; Explain bound ServiceAccount tokens and automounting; Issue and deny client certificates through the CSR API. |
+| 040 / 01 | Authorization And Effective Permissions | 1 | Compare Role, ClusterRole, RoleBinding and ClusterRoleBinding; Evaluate effective permissions with impersonation; Identify verbs and bindings that allow privilege escalation; Apply least privilege to users and ServiceAccounts. |
+| 050 / 01 | Secrets And Sensitive Configuration | 1 | Explain why base64 is not protection; Describe what encryption at rest changes and what it does not; Predict how a running Pod sees a Secret change; Rotate a credential and find the exposure paths. |
+| 060 / 01 | Isolation And Segmentation | 1 | State what a namespace separates and what it does not; Bound a tenant with ResourceQuota and LimitRange; Find Pods that share the host process, network or filesystem; Choose taints or RuntimeClass to separate workloads on nodes. |
+| 070 / 01 | Audit Policy And Security Evidence | 1 | Read an audit event and name the caller, verb, target and result; Write an ordered policy with levels and omitted stages; Keep secret values out of the log; Name the ways evidence is lost and the controls against them. |
+| 080 / 01 | Traffic Isolation With NetworkPolicy | 1 | Explain how a NetworkPolicy selects Pods and changes what they accept; Write allow rules that use the Pod port and the right selectors; Write egress rules that keep DNS working; Combine namespace and Pod selectors with the intended meaning. |
 
 Every section begins with an introduction. Every module ends with a summary before the next module. YAML checkpoint banks follow selected section summaries; a domain review bank closes the course. They are indexed separately for future application integration.
 
-This course has no labs or playgrounds, as requested by the maintainer. All material is readable without a cluster. Technical content remains draft until review; no runtime execution or lab validation is claimed.
+Each section has a playground, a module lab, a capstone lab and a quiz. Labs and playgrounds are untested (static checks only); technical content remains draft until review.

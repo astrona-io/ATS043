@@ -1,39 +1,105 @@
----
-draft: true
-exam_objectives:
-  - Pod Security Standards
----
 # Security Contexts And Profile Requirements
 
-The `scout` process serves requests without needing host administration. A security context describes execution privileges and related settings for a Pod or container. Settings can require a non-root user, prevent privilege escalation, drop Linux capabilities and make the root filesystem read-only where the application supports it.
+Every container in a pod starts as a process on a node. The settings that decide which user runs it, which privileges it keeps and which system calls it may use live in a field called `securityContext`. A security context is a group of settings that the kubelet (the agent on each node) passes to the container runtime when it creates the container. This part shows where those fields sit and what each one changes inside the node.
 
-Linux capabilities divide selected privileged operations into smaller permissions. Dropping unnecessary capabilities reduces what a compromised process can do. A seccomp profile restricts permitted system calls. These controls complement ordinary file permissions and application checks; they do not repair a vulnerable application by themselves.
+## Two levels, one effective value
 
-A read-only root filesystem can prevent writes to the image filesystem, but the application may still need writable temporary or data mounts. A non-root setting must match the image's user and file ownership requirements. Security configuration that prevents startup needs a suitable application design rather than simply being removed without analysis.
+A `securityContext` can appear at pod level (`spec.securityContext`) and at container level (`spec.containers[*].securityContext`). Pod-level values are defaults for every container in the pod, including init containers. A container-level value for the same field wins. Some fields exist in only one place: `fsGroup` is pod-level only, and `capabilities`, `privileged`, `allowPrivilegeEscalation` and `readOnlyRootFilesystem` are container-level only.
 
-Pod Security Standards define Privileged, Baseline and Restricted profiles. Privileged allows broad behavior. Baseline prevents common privilege escalations while permitting many workloads. Restricted applies stronger hardening requirements. Pod Security Admission can enforce, warn about or audit these requirements through namespace configuration.
+Look at the effective settings of the running `scout` pod. First check what the pod declares:
 
-The profile is an admission rule, not a runtime process that automatically rewrites all applications into compliant ones. Enforcement can reject a new Pod. Warning reports a concern without the same rejection behavior. Version selection matters when comparing profile requirements across Kubernetes releases.
+<!-- astrona:playground:renew -->
 
-If an authorized developer cannot create a privileged workload in a Restricted namespace, the failure is expected admission behavior. The correct response is to design a compliant workload or obtain a justified exception through the platform's policy, not to assume role-based access control (RBAC) authentication failed.
+```sh
+kubectl -n starfleet get deploy scout -o jsonpath='{.spec.template.spec.securityContext}{"\n"}{.spec.template.spec.containers[0].securityContext}{"\n"}'
+```
 
-## Combining Execution Controls
+Both lines are empty. The pod declares nothing, so the container runtime applies its own defaults: the user that the image sets, the default Linux capability set, and no seccomp filter unless the runtime or kubelet adds one. A missing `securityContext` is the weakest configuration, not a neutral one.
 
-A non-root process reduces reliance on privileged file access, but its numeric user and group must be compatible with the files it needs. An image that stores writable application data under a root-owned directory may fail after the identity is restricted. A suitable writable volume and ownership plan can preserve both application operation and the protection.
+## What each field does underneath
 
-Preventing privilege escalation helps prevent a process from gaining additional privilege through execution mechanisms. Dropping capabilities removes selected privileged operations. Seccomp filters system calls. A read-only root filesystem limits writes to the image filesystem. Each constrains a different behavior, so one setting does not imply all the others are active.
+`runAsUser` and `runAsGroup` set the numeric user ID (UID) and group ID (GID) of the container process. The runtime applies them when it starts the process. If you omit `runAsUser`, the user comes from the image's `USER` instruction, and many images run as UID 0 (root).
 
-These controls also have scope. A Pod-level context can supply defaults, while container-level settings can apply to individual processes where supported. A helper needing one specific capability should not automatically make every container privileged. Read the effective configuration of each container, including init containers and supporting helpers.
+`runAsNonRoot: true` does not choose a user. It is a check. Before it starts the container, the kubelet reads the effective UID. If the UID is 0, the kubelet refuses to start the container. If the image names its user as text (for example `USER app`) and the pod sets no `runAsUser`, the kubelet cannot prove the user is not root and also refuses to start it. The fix is a numeric `runAsUser`.
 
-## Admission Profiles And Actual Runtime Protection
+`allowPrivilegeEscalation: false` sets the Linux `no_new_privs` flag on the process. With that flag, a child process cannot gain more privileges than its parent, for example through a set-user-ID binary. When a container is `privileged` or has the `CAP_SYS_ADMIN` capability, this field is always true, so the combination is invalid for hardening.
 
-A namespace can enforce a Pod Security profile, warn on another selected level and audit violations for review. Enforcement affects acceptance of the relevant Pod configuration. Warning and audit can support migration toward stronger policy without behaving identically to enforcement. Merely enabling audit mode does not mean violating Pods are rejected.
+`capabilities` splits the power of root into units. A container starts with a default set (for example `CHOWN`, `NET_BIND_SERVICE`, `SETUID`). `drop: ["ALL"]` removes all of them. `add` gives back only the ones the application needs. A process with no capabilities cannot change file ownership, load modules or change the system clock, even when it runs as UID 0.
 
-The profile version should be deliberate because requirements can evolve with Kubernetes. A change to enforcement can affect newly admitted Pods and future replacements, so a workload that previously ran is not proof that its next Pod will pass the current policy.
+`seccompProfile` selects a filter of allowed system calls. `type: RuntimeDefault` uses the filter shipped with the container runtime, which blocks dozens of rarely needed and dangerous calls. `type: Unconfined` turns the filter off. `type: Localhost` loads a profile file from the node.
 
-Admission checks validate a declared configuration; runtime controls enforce that configuration during execution. Application authorization, secret handling and vulnerability management remain necessary even for a profile-compliant Pod. Explain a protection through what it restricts, where it acts and which threat remains outside its boundary.
+`readOnlyRootFilesystem: true` mounts the container's root filesystem read-only. It does not appear in the Pod Security Standards, but it stops a compromised process from writing tools into the image filesystem. The application then needs a writable volume for its temporary files.
+
+`privileged: true` gives the container nearly all capabilities and access to host devices. It is the opposite of every setting above.
+
+```mermaid
+flowchart TB
+    S["kubelet"] --> R["container runtime"]
+    R -->|"runAsUser, runAsGroup"| P["process identity"]
+    R -->|"capabilities"| C["Linux capability set"]
+    R -->|"seccompProfile"| F["system call filter"]
+    R -->|"allowPrivilegeEscalation"| N["no_new_privs flag"]
+```
+
+The diagram shows that the kubelet hands the fields to the container runtime, and the runtime applies each one to the Linux process when it creates the container.
+
+## A first hardened pod
+
+Save this as `pod-hardened.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hardened
+  namespace: starfleet
+spec:
+  containers:
+    - name: probe
+      image: mccutchen/go-httpbin:2.25.0
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+        seccompProfile:
+          type: RuntimeDefault
+```
+
+Apply it:
+
+```sh
+kubectl apply -f pod-hardened.yaml
+```
+
+Then check the result:
+
+```sh
+kubectl -n starfleet get pod hardened -o jsonpath='{.spec.containers[0].securityContext.runAsUser}{"\n"}'
+```
+
+The command prints `10001`. The pod keeps running because the application listens on port 8080, which a non-root process may bind without any capability. A port below 1024 would need `NET_BIND_SERVICE`.
+
+## Writable paths and file ownership
+
+A non-root process can read only what its UID is allowed to read. If the image keeps data in a directory owned by root, the process fails with a permission error after you set `runAsUser`. The usual fix is a volume for the writable path. `fsGroup` sets the group that owns the contents of supported volumes, so a non-root process can write to them.
+
+Do not remove the security settings when an application fails to start. Find the path it writes to, mount an `emptyDir` volume there, and keep the restriction.
+
+## Settings that look the same but are not
+
+`runAsNonRoot` is a check and `runAsUser` is a value. `drop: ["ALL"]` removes capabilities but does not stop a container from running as root, and root without capabilities still owns its files. `allowPrivilegeEscalation: false` does not remove capabilities already granted. Each field closes one path, so one setting never implies the others.
+
+Delete the test pod when you finish:
+
+```sh
+kubectl -n starfleet delete pod hardened
+```
+
+You now know which field controls which part of the process. The open question is which combination of these settings a cluster should demand, and that is what the profiles define.
 
 ## Common pitfalls
 
 > [!WARNING]
-> A security context must fit the application. Pod Security enforcement rejects disallowed configurations; it does not automatically repair them or replace application programming interface (API) permissions.
+> `runAsNonRoot: true` alone fails when the image uses a text user name; add a numeric `runAsUser`. A pod-level field is overridden by the same field on a container. Removing a setting to make an application start throws away the protection it gave.

@@ -1,17 +1,29 @@
+# Section 060: Isolation
+
+Namespaces separate names and policy scope, and they leave the nodes, the kernel and the default network shared. This section shows what Pods still share, how quotas and default limits bound a tenant, how taints and RuntimeClass separate workloads on nodes and which permissions join namespaces.
+
+**Exam objective covered:** Isolation (Kubernetes Security Fundamentals, KCSA)
+
 ---
-draft: true
-exam_objectives:
-  - Isolation and Segmentation
+
+## What You Will Master
+
+- State what a namespace separates and what it does not
+- Bound a tenant with ResourceQuota and LimitRange
+- Find Pods that share the host process, network or filesystem
+- Choose taints or RuntimeClass to separate workloads on nodes
+
 ---
-# Isolation and Segmentation
 
-This section teaches isolation and namespace segmentation. These ideas help you explain system behavior and choose a suitable approach in a KCSA scenario.
+## The Learning Path
 
-You will work through Isolation And Namespace Segmentation. Each module introduces its goals, teaches the concepts through examples, and closes with a summary. Reusable YAML checkpoints review related objectives after selected section summaries. The course assessment index records their placement and coverage.
+### 1. Isolation And Segmentation
+*   **Module Reader:** **[Module 1: Isolation And Segmentation](./module-01/course.md)**
+*   **Hands-on Playground:** `sections/section-060/module-01/playground` - a kind cluster with the Starfleet workloads where you can try quotas, limit ranges, taints and runtime classes.
+*   **Module Lab:** `sections/section-060/module-01/labs/lab-01` - add a quota and default limits and remove host process sharing.
 
-## Learning Outcomes
+### Capstone
+*   **Capstone Lab:** `sections/section-060/capstone/labs/lab-01` - bound two tenants, cut cross-namespace access and remove host sharing.
+*   **Knowledge Check:** `sections/section-060/quiz.yaml`
 
-- Distinguish namespace scope from physical or kernel isolation.
-- Compare API, network, process and resource controls.
-- Relate shared-node trust to workload compromise.
-- Identify residual access through legitimate dependencies.
+The labs and playgrounds are UNTESTED: they were built and checked statically only.

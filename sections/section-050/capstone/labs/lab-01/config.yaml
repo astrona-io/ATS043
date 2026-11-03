@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Secrets Capstone (LAB). Graded against the live cluster. Rotate and deliver two Secrets safely and remove unused ones.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-043-capstone-050
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.8
+    preloadImages:
+      - ghcr.io/stefanprodan/podinfo:6.15.0
+      - mccutchen/go-httpbin:2.25.0
+      - curlimages/curl:8.22.0
+
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the starting state, including the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by astrona test: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: shuttle-file
+      description: shuttle reads token-2 from a read-only volume at /etc/shuttle and has no secret environment variable
+      type: file
+      source: validation/validate-shuttle-file.sh
+      hint: Rotate api-token to token-2, mount it as a volume at /etc/shuttle and remove the environment variable.
+    - name: probe-no-subpath
+      description: probe mounts probe-key without subPath and reads key-2
+      type: file
+      source: validation/validate-probe-no-subpath.sh
+      hint: Remove subPath so the mount is a directory. The file is then /etc/probe/key/key. Rotate the value to key-2.
+    - name: immutable
+      description: api-token and probe-key hold their new values and are immutable
+      type: file
+      source: validation/validate-immutable.sh
+      hint: Change the values first, then set immutable true. Do it only once the value is final.
+    - name: unused-removed
+      description: The unused Secrets old-api-token and spare-ssh-key are deleted and used Secrets remain
+      type: file
+      source: validation/validate-unused-removed.sh
+      hint: List what each Deployment references. Delete only the Secrets that no Pod uses.
+    - name: available
+      description: shuttle and probe are available
+      type: file
+      source: validation/validate-available.sh
+      hint: Wait for each rollout to finish.
+
+teardown:
+  keepCluster: false
