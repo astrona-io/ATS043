@@ -3,7 +3,7 @@ kind: question_bank
 id: ats043-section-060
 course_id: ATS043
 exam_code: KCSA
-status: draft
+status: alpha
 provenance: Original practice material; not official examination questions.
 scope:
   type: section
