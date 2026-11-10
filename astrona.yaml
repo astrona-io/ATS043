@@ -115,7 +115,7 @@ modules:
         difficulty: intermediate
         estimated_duration: 20m
         topic: admission
-        task_kind: configuration
+        task_kind: build
         tags: [pod-security-admission, namespace-labels, enforce, warn, audit, baseline]
         learning_goals:
           - Set enforce, enforce-version, warn and audit labels
@@ -169,7 +169,7 @@ modules:
         difficulty: intermediate
         estimated_duration: 20m
         topic: authentication
-        task_kind: configuration
+        task_kind: build
         tags: [authentication, serviceaccount, token, csr, automount, legacy-secret]
         learning_goals:
           - Approve a CertificateSigningRequest after reading its subject
